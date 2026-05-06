@@ -96,7 +96,9 @@ One-time setup:
    Cloudflare Deploy Hook URL as `CLOUDFLARE_DEPLOY_HOOK_URL`.
 
 3. Create a Sanity document webhook:
-   - URL: `https://pobratymy.com/api/sanity-redeploy`
+   - URL: `https://pobratymy-web.pobratymy.workers.dev/api/sanity-redeploy`
+     until `pobratymy.com` is routed to this Worker. After the custom domain is
+     cut over, use `https://pobratymy.com/api/sanity-redeploy`.
    - Method: `POST`
    - Dataset: `production`
    - Trigger on: `create`, `update`, `delete`
