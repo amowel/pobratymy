@@ -54,41 +54,39 @@ Current Worker:
 - workers.dev subdomain: `pobratymy`
 - Preview URL: `https://pobratymy-web.pobratymy.workers.dev`
 
-GitHub Actions deployment secrets:
-
-- `CLOUDFLARE_ACCOUNT_ID`: `670a46658b7d6e6b27e0c4799c760633`
-- `CLOUDFLARE_API_TOKEN`: Cloudflare API token with permission to deploy `pobratymy-web`.
-
 The public app falls back to typed seed content when `VITE_SANITY_PROJECT_ID`
-is missing. The `Deploy Web` workflow provides the production Sanity variables
-so prerendering fetches published content from the public Sanity dataset.
+is missing. Cloudflare Builds must provide the production Sanity variables so
+prerendering fetches published content from the public Sanity dataset.
+
+Cloudflare Builds setup:
+
+1. Open Workers & Pages > `pobratymy-web` > Settings > Builds.
+2. Connect the GitHub repository `amowel/pobratymy`.
+3. Set production branch to `main`.
+4. Leave root directory as the repository root so Cloudflare uses the workspace
+   lockfile.
+5. Set build command to `pnpm --filter @pobratymy/web run build`.
+6. Set deploy command to `pnpm --filter @pobratymy/web exec wrangler deploy`.
+7. Add build environment variables:
+   - `VITE_SANITY_PROJECT_ID=o109v8h2`
+   - `VITE_SANITY_DATASET=production`
+   - `VITE_SITE_URL=https://pobratymy.com`
+   - `CLOUDFLARE_INCLUDE_PROCESS_ENV=true`
+8. Create a Deploy Hook named `sanity-production` for branch `main` and copy
+   its URL.
 
 ## Sanity Publish-to-Live
 
 The website is prerendered during Cloudflare Worker builds, so content publishes
-need to trigger a fresh web deploy. The Worker exposes a signed webhook endpoint
-that verifies Sanity requests and dispatches the `Deploy Web` GitHub Actions
-workflow.
+need to trigger a fresh web deploy. Use a Sanity webhook that POSTs directly to
+the Cloudflare Deploy Hook URL.
 
 One-time setup:
 
-1. Create a fine-grained GitHub token for `amowel/pobratymy` with `Actions: Read and write`.
-2. Generate a webhook secret:
-
-   ```bash
-   openssl rand -hex 32
-   ```
-
-3. Store runtime Worker secrets:
-
-   ```bash
-   cd apps/web
-   pnpm exec wrangler secret put SANITY_REDEPLOY_WEBHOOK_SECRET
-   pnpm exec wrangler secret put GITHUB_REDEPLOY_TOKEN
-   ```
-
-4. Create a Sanity document webhook:
-   - URL: `https://pobratymy-web.pobratymy.workers.dev/api/sanity-redeploy`
+1. Create the Cloudflare Deploy Hook described above.
+2. Create a Sanity document webhook:
+   - URL: the Cloudflare Deploy Hook URL
+   - Method: `POST`
    - Dataset: `production`
    - Trigger on: `create`, `update`, `delete`
    - Drafts/versions: disabled
@@ -110,7 +108,8 @@ One-time setup:
      }
      ```
 
-   - Secret: the same value stored in `SANITY_REDEPLOY_WEBHOOK_SECRET`.
+Keep the Deploy Hook URL private. Anyone with that URL can trigger a build, so
+rotate it in Cloudflare if it is exposed.
 
 Manual local deploy, if needed:
 
