@@ -38,7 +38,6 @@ export const newsPost = defineType({
       name: 'coverImage',
       title: 'Cover image',
       type: 'imageWithAlt',
-      validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'body',

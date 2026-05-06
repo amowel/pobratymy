@@ -14,18 +14,23 @@ pnpm install
 
 The Studio source lives in `apps/studio`, but the editing UI should be hosted by Sanity.
 
-Account-bound setup:
+Current Sanity project:
+
+- Organization: `Pobratymy`
+- Organization ID: `owpww6F2i`
+- Project name: `Pobratymy CMS`
+- Project ID: `o109v8h2`
+- Dataset: `production`
+- Studio URL: `https://pobratymy.sanity.studio/`
+- Studio app ID: `fppsn3u9pib2d9kdziy9eiwm`
+- CORS origins: `http://localhost:3000`, `http://localhost:3001`, `https://pobratymy-web.pobratymy.workers.dev`, `https://pobratymy.com`
+
+Local environment:
 
 ```bash
-pnpm create sanity@latest --dataset production --template clean --typescript --output-path apps/studio
-```
-
-If creating the project through the Sanity dashboard instead, copy the project ID into:
-
-```bash
-SANITY_STUDIO_PROJECT_ID=
+SANITY_STUDIO_PROJECT_ID=o109v8h2
 SANITY_STUDIO_DATASET=production
-VITE_SANITY_PROJECT_ID=
+VITE_SANITY_PROJECT_ID=o109v8h2
 VITE_SANITY_DATASET=production
 VITE_SITE_URL=https://pobratymy.com
 ```
@@ -34,10 +39,8 @@ Preferred Studio hostname:
 
 ```bash
 cd apps/studio
-pnpm sanity deploy
+pnpm run deploy
 ```
-
-Use `pobratymy` as the Studio hostname if it is available, producing `https://pobratymy.sanity.studio`.
 
 ## Cloudflare
 

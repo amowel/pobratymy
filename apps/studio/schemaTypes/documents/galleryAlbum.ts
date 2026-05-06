@@ -31,14 +31,12 @@ export const galleryAlbum = defineType({
       name: 'coverImage',
       title: 'Cover image',
       type: 'imageWithAlt',
-      validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'photos',
       title: 'Photos',
       type: 'array',
       of: [defineArrayMember({ type: 'imageWithAlt' })],
-      validation: (rule) => rule.required().min(1),
     }),
     defineField({
       name: 'description',
