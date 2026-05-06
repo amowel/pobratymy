@@ -1,15 +1,30 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { PagePlaceholder } from '../components/PagePlaceholder'
+import { CollectionPage } from '../components/CollectionPage'
+import { getSiteContent } from '../content/sanity'
+import { fallbackSeo, seoMeta } from '../content/seo'
 
 export const Route = createFileRoute('/proekty')({
+  loader: () => getSiteContent(),
+  head: () => ({
+    meta: seoMeta(
+      fallbackSeo(
+        'Проєкти',
+        'Проєкти, ініціативи і напрями роботи ГО «Побратими разом».',
+      ),
+    ),
+  }),
   component: Projects,
 })
 
 function Projects() {
+  const content = Route.useLoaderData()
+
   return (
-    <PagePlaceholder
-      title="Проєкти"
-      description="Стабільні ініціативи, їхній статус, результати та медіа будуть керуватися через Sanity."
+    <CollectionPage
+      eyebrow="Проєкти"
+      title="Ініціативи та напрями роботи"
+      summary="Проєкти мають показувати статус, контекст і зрозумілий спосіб підтримки."
+      items={content.projects}
     />
   )
 }

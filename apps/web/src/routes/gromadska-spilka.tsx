@@ -1,15 +1,21 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { PagePlaceholder } from '../components/PagePlaceholder'
+import { ContentPage } from '../components/ContentPage'
+import { getPageContent } from '../content/sanity'
+import { fallbackSeo, seoMeta } from '../content/seo'
 
 export const Route = createFileRoute('/gromadska-spilka')({
+  loader: () => getPageContent('civicUnion'),
+  head: ({ loaderData }) => ({
+    meta: seoMeta(
+      loaderData?.seo ??
+        fallbackSeo('Громадська спілка', 'Інформація про громадську спілку.'),
+    ),
+  }),
   component: CivicUnion,
 })
 
 function CivicUnion() {
-  return (
-    <PagePlaceholder
-      title="Громадська спілка"
-      description="Сторінка збережена у поточній структурі URL і буде наповнюватися через CMS."
-    />
-  )
+  const page = Route.useLoaderData()
+
+  return <ContentPage page={page} />
 }

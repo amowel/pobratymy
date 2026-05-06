@@ -1,15 +1,20 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { PagePlaceholder } from '../components/PagePlaceholder'
+import { ContentPage } from '../components/ContentPage'
+import { getPageContent } from '../content/sanity'
+import { fallbackSeo, seoMeta } from '../content/seo'
 
 export const Route = createFileRoute('/about-us')({
+  loader: () => getPageContent('aboutUs'),
+  head: ({ loaderData }) => ({
+    meta: seoMeta(
+      loaderData?.seo ?? fallbackSeo('Про організацію', 'Інформація про організацію.'),
+    ),
+  }),
   component: AboutUs,
 })
 
 function AboutUs() {
-  return (
-    <PagePlaceholder
-      title="About us"
-      description="Legacy route kept for the current site structure. Content will be managed in Sanity."
-    />
-  )
+  const page = Route.useLoaderData()
+
+  return <ContentPage page={page} />
 }

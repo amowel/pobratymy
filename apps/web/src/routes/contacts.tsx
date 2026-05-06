@@ -1,15 +1,21 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { PagePlaceholder } from '../components/PagePlaceholder'
+import { ContentPage } from '../components/ContentPage'
+import { getPageContent } from '../content/sanity'
+import { fallbackSeo, seoMeta } from '../content/seo'
 
 export const Route = createFileRoute('/contacts')({
+  loader: () => getPageContent('contacts'),
+  head: ({ loaderData }) => ({
+    meta: seoMeta(
+      loaderData?.seo ??
+        fallbackSeo('Контакти', 'Контактні канали ГО «Побратими разом».'),
+    ),
+  }),
   component: Contacts,
 })
 
 function Contacts() {
-  return (
-    <PagePlaceholder
-      title="Контакти"
-      description="Контактні дані, соціальні посилання та канали зв'язку будуть редагуватися в Sanity."
-    />
-  )
+  const page = Route.useLoaderData()
+
+  return <ContentPage page={page} />
 }

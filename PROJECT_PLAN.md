@@ -249,6 +249,7 @@ Keep existing routes as canonical for v1 to reduce migration risk:
 - `/contacts/`
 - `/dopomogty/`
 - `/gromadska-spilka/`
+- `/galereia/`
 - `/informatsiia-dlia-zmi/`
 - `/novyny/`
 - `/pro-nas/`

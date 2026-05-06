@@ -27,6 +27,7 @@ SANITY_STUDIO_PROJECT_ID=
 SANITY_STUDIO_DATASET=production
 VITE_SANITY_PROJECT_ID=
 VITE_SANITY_DATASET=production
+VITE_SITE_URL=https://pobratymy.com
 ```
 
 Preferred Studio hostname:
@@ -51,6 +52,10 @@ Recommended deployment setup:
 5. Add Sanity project variables in Cloudflare build settings.
 6. Create a Cloudflare deploy hook.
 7. Add a Sanity webhook that calls the Cloudflare deploy hook on publish.
+
+The public app currently falls back to typed seed content when `VITE_SANITY_PROJECT_ID`
+is missing. Once Sanity is configured, production builds should fetch published content
+from the public Sanity dataset during prerendering.
 
 Manual local deploy, if needed:
 

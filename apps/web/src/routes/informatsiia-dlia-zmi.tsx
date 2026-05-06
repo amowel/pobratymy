@@ -1,15 +1,21 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { PagePlaceholder } from '../components/PagePlaceholder'
+import { ContentPage } from '../components/ContentPage'
+import { getPageContent } from '../content/sanity'
+import { fallbackSeo, seoMeta } from '../content/seo'
 
 export const Route = createFileRoute('/informatsiia-dlia-zmi')({
+  loader: () => getPageContent('mediaInfo'),
+  head: ({ loaderData }) => ({
+    meta: seoMeta(
+      loaderData?.seo ??
+        fallbackSeo('Інформація для ЗМІ', 'Довідкова інформація для медіа.'),
+    ),
+  }),
   component: MediaInfo,
 })
 
 function MediaInfo() {
-  return (
-    <PagePlaceholder
-      title="Інформація для ЗМІ"
-      description="Матеріали для медіа, контакти та довідкова інформація будуть структуровані в Sanity."
-    />
-  )
+  const page = Route.useLoaderData()
+
+  return <ContentPage page={page} />
 }

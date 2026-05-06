@@ -15,10 +15,14 @@ import { Route as ProNasRouteImport } from './routes/pro-nas'
 import { Route as NovynyRouteImport } from './routes/novyny'
 import { Route as InformatsiiaDliaZmiRouteImport } from './routes/informatsiia-dlia-zmi'
 import { Route as GromadskaSpilkaRouteImport } from './routes/gromadska-spilka'
+import { Route as GalereiaRouteImport } from './routes/galereia'
 import { Route as DopomogtyRouteImport } from './routes/dopomogty'
 import { Route as ContactsRouteImport } from './routes/contacts'
 import { Route as AboutUsRouteImport } from './routes/about-us'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProektySlugRouteImport } from './routes/proekty.$slug'
+import { Route as NovynySlugRouteImport } from './routes/novyny.$slug'
+import { Route as GalereiaSlugRouteImport } from './routes/galereia.$slug'
 
 const VideoRoute = VideoRouteImport.update({
   id: '/video',
@@ -50,6 +54,11 @@ const GromadskaSpilkaRoute = GromadskaSpilkaRouteImport.update({
   path: '/gromadska-spilka',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GalereiaRoute = GalereiaRouteImport.update({
+  id: '/galereia',
+  path: '/galereia',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DopomogtyRoute = DopomogtyRouteImport.update({
   id: '/dopomogty',
   path: '/dopomogty',
@@ -70,30 +79,53 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProektySlugRoute = ProektySlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ProektyRoute,
+} as any)
+const NovynySlugRoute = NovynySlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => NovynyRoute,
+} as any)
+const GalereiaSlugRoute = GalereiaSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => GalereiaRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about-us': typeof AboutUsRoute
   '/contacts': typeof ContactsRoute
   '/dopomogty': typeof DopomogtyRoute
+  '/galereia': typeof GalereiaRouteWithChildren
   '/gromadska-spilka': typeof GromadskaSpilkaRoute
   '/informatsiia-dlia-zmi': typeof InformatsiiaDliaZmiRoute
-  '/novyny': typeof NovynyRoute
+  '/novyny': typeof NovynyRouteWithChildren
   '/pro-nas': typeof ProNasRoute
-  '/proekty': typeof ProektyRoute
+  '/proekty': typeof ProektyRouteWithChildren
   '/video': typeof VideoRoute
+  '/galereia/$slug': typeof GalereiaSlugRoute
+  '/novyny/$slug': typeof NovynySlugRoute
+  '/proekty/$slug': typeof ProektySlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about-us': typeof AboutUsRoute
   '/contacts': typeof ContactsRoute
   '/dopomogty': typeof DopomogtyRoute
+  '/galereia': typeof GalereiaRouteWithChildren
   '/gromadska-spilka': typeof GromadskaSpilkaRoute
   '/informatsiia-dlia-zmi': typeof InformatsiiaDliaZmiRoute
-  '/novyny': typeof NovynyRoute
+  '/novyny': typeof NovynyRouteWithChildren
   '/pro-nas': typeof ProNasRoute
-  '/proekty': typeof ProektyRoute
+  '/proekty': typeof ProektyRouteWithChildren
   '/video': typeof VideoRoute
+  '/galereia/$slug': typeof GalereiaSlugRoute
+  '/novyny/$slug': typeof NovynySlugRoute
+  '/proekty/$slug': typeof ProektySlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -101,12 +133,16 @@ export interface FileRoutesById {
   '/about-us': typeof AboutUsRoute
   '/contacts': typeof ContactsRoute
   '/dopomogty': typeof DopomogtyRoute
+  '/galereia': typeof GalereiaRouteWithChildren
   '/gromadska-spilka': typeof GromadskaSpilkaRoute
   '/informatsiia-dlia-zmi': typeof InformatsiiaDliaZmiRoute
-  '/novyny': typeof NovynyRoute
+  '/novyny': typeof NovynyRouteWithChildren
   '/pro-nas': typeof ProNasRoute
-  '/proekty': typeof ProektyRoute
+  '/proekty': typeof ProektyRouteWithChildren
   '/video': typeof VideoRoute
+  '/galereia/$slug': typeof GalereiaSlugRoute
+  '/novyny/$slug': typeof NovynySlugRoute
+  '/proekty/$slug': typeof ProektySlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -115,36 +151,48 @@ export interface FileRouteTypes {
     | '/about-us'
     | '/contacts'
     | '/dopomogty'
+    | '/galereia'
     | '/gromadska-spilka'
     | '/informatsiia-dlia-zmi'
     | '/novyny'
     | '/pro-nas'
     | '/proekty'
     | '/video'
+    | '/galereia/$slug'
+    | '/novyny/$slug'
+    | '/proekty/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about-us'
     | '/contacts'
     | '/dopomogty'
+    | '/galereia'
     | '/gromadska-spilka'
     | '/informatsiia-dlia-zmi'
     | '/novyny'
     | '/pro-nas'
     | '/proekty'
     | '/video'
+    | '/galereia/$slug'
+    | '/novyny/$slug'
+    | '/proekty/$slug'
   id:
     | '__root__'
     | '/'
     | '/about-us'
     | '/contacts'
     | '/dopomogty'
+    | '/galereia'
     | '/gromadska-spilka'
     | '/informatsiia-dlia-zmi'
     | '/novyny'
     | '/pro-nas'
     | '/proekty'
     | '/video'
+    | '/galereia/$slug'
+    | '/novyny/$slug'
+    | '/proekty/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -152,11 +200,12 @@ export interface RootRouteChildren {
   AboutUsRoute: typeof AboutUsRoute
   ContactsRoute: typeof ContactsRoute
   DopomogtyRoute: typeof DopomogtyRoute
+  GalereiaRoute: typeof GalereiaRouteWithChildren
   GromadskaSpilkaRoute: typeof GromadskaSpilkaRoute
   InformatsiiaDliaZmiRoute: typeof InformatsiiaDliaZmiRoute
-  NovynyRoute: typeof NovynyRoute
+  NovynyRoute: typeof NovynyRouteWithChildren
   ProNasRoute: typeof ProNasRoute
-  ProektyRoute: typeof ProektyRoute
+  ProektyRoute: typeof ProektyRouteWithChildren
   VideoRoute: typeof VideoRoute
 }
 
@@ -204,6 +253,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GromadskaSpilkaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/galereia': {
+      id: '/galereia'
+      path: '/galereia'
+      fullPath: '/galereia'
+      preLoaderRoute: typeof GalereiaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dopomogty': {
       id: '/dopomogty'
       path: '/dopomogty'
@@ -232,19 +288,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/proekty/$slug': {
+      id: '/proekty/$slug'
+      path: '/$slug'
+      fullPath: '/proekty/$slug'
+      preLoaderRoute: typeof ProektySlugRouteImport
+      parentRoute: typeof ProektyRoute
+    }
+    '/novyny/$slug': {
+      id: '/novyny/$slug'
+      path: '/$slug'
+      fullPath: '/novyny/$slug'
+      preLoaderRoute: typeof NovynySlugRouteImport
+      parentRoute: typeof NovynyRoute
+    }
+    '/galereia/$slug': {
+      id: '/galereia/$slug'
+      path: '/$slug'
+      fullPath: '/galereia/$slug'
+      preLoaderRoute: typeof GalereiaSlugRouteImport
+      parentRoute: typeof GalereiaRoute
+    }
   }
 }
+
+interface GalereiaRouteChildren {
+  GalereiaSlugRoute: typeof GalereiaSlugRoute
+}
+
+const GalereiaRouteChildren: GalereiaRouteChildren = {
+  GalereiaSlugRoute: GalereiaSlugRoute,
+}
+
+const GalereiaRouteWithChildren = GalereiaRoute._addFileChildren(
+  GalereiaRouteChildren,
+)
+
+interface NovynyRouteChildren {
+  NovynySlugRoute: typeof NovynySlugRoute
+}
+
+const NovynyRouteChildren: NovynyRouteChildren = {
+  NovynySlugRoute: NovynySlugRoute,
+}
+
+const NovynyRouteWithChildren =
+  NovynyRoute._addFileChildren(NovynyRouteChildren)
+
+interface ProektyRouteChildren {
+  ProektySlugRoute: typeof ProektySlugRoute
+}
+
+const ProektyRouteChildren: ProektyRouteChildren = {
+  ProektySlugRoute: ProektySlugRoute,
+}
+
+const ProektyRouteWithChildren =
+  ProektyRoute._addFileChildren(ProektyRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutUsRoute: AboutUsRoute,
   ContactsRoute: ContactsRoute,
   DopomogtyRoute: DopomogtyRoute,
+  GalereiaRoute: GalereiaRouteWithChildren,
   GromadskaSpilkaRoute: GromadskaSpilkaRoute,
   InformatsiiaDliaZmiRoute: InformatsiiaDliaZmiRoute,
-  NovynyRoute: NovynyRoute,
+  NovynyRoute: NovynyRouteWithChildren,
   ProNasRoute: ProNasRoute,
-  ProektyRoute: ProektyRoute,
+  ProektyRoute: ProektyRouteWithChildren,
   VideoRoute: VideoRoute,
 }
 export const routeTree = rootRouteImport

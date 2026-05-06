@@ -1,25 +1,30 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { HomePage } from '../components/HomePage'
+import { getSiteContent } from '../content/sanity'
+import { fallbackSeo, seoMeta } from '../content/seo'
 
-export const Route = createFileRoute('/')({ component: Home })
+export const Route = createFileRoute('/')({
+  loader: () => getSiteContent(),
+  head: ({ loaderData }) => ({
+    meta: seoMeta(
+      loaderData?.home.seo ??
+        fallbackSeo(
+          'Побратими разом',
+          'Громадська організація ветеранів та волонтерів в Україні.',
+        ),
+    ),
+  }),
+  component: Home,
+})
 
 function Home() {
+  const content = Route.useLoaderData()
+
   return (
-    <main className="page-wrap">
-      <section className="hero-shell">
-        <h1>Ветеранська та волонтерська спільнота, що підтримує своїх поруч.</h1>
-        <p>
-          Це стартова структура нового сайту. Дизайн, бренд-система і контент будуть
-          реалізовані наступним етапом на основі узгодженого плану.
-        </p>
-        <div className="action-row">
-          <a href="/dopomogty/" className="button-primary">
-            Підтримати
-          </a>
-          <a href="/proekty/" className="button-secondary">
-            Проєкти
-          </a>
-        </div>
-      </section>
-    </main>
+    <HomePage
+      home={content.home}
+      projects={content.projects}
+      newsPosts={content.newsPosts}
+    />
   )
 }

@@ -1,15 +1,24 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { PagePlaceholder } from '../components/PagePlaceholder'
+import { ContentPage } from '../components/ContentPage'
+import { getPageContent } from '../content/sanity'
+import { fallbackSeo, seoMeta } from '../content/seo'
 
 export const Route = createFileRoute('/pro-nas')({
+  loader: () => getPageContent('about'),
+  head: ({ loaderData }) => ({
+    meta: seoMeta(
+      loaderData?.seo ??
+        fallbackSeo(
+          'Про нас',
+          'Місія, принципи та напрями роботи ГО «Побратими разом».',
+        ),
+    ),
+  }),
   component: About,
 })
 
 function About() {
-  return (
-    <PagePlaceholder
-      title="Про нас"
-      description="Місія, історія та напрямки роботи організації будуть редагуватися як структурований контент."
-    />
-  )
+  const page = Route.useLoaderData()
+
+  return <ContentPage page={page} />
 }

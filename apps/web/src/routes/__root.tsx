@@ -1,6 +1,7 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
+import { seoMeta } from '../content/seo'
 
 import appCss from '../styles.css?url'
 
@@ -14,13 +15,10 @@ export const Route = createRootRoute({
         name: 'viewport',
         content: 'width=device-width, initial-scale=1',
       },
-      {
+      ...seoMeta({
         title: 'Побратими разом',
-      },
-      {
-        name: 'description',
-        content: 'Громадська організація ветеранів та волонтерів в Україні.',
-      },
+        description: 'Громадська організація ветеранів та волонтерів в Україні.',
+      }),
     ],
     links: [
       {

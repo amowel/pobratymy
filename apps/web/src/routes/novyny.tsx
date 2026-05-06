@@ -1,15 +1,27 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { PagePlaceholder } from '../components/PagePlaceholder'
+import { CollectionPage } from '../components/CollectionPage'
+import { getSiteContent } from '../content/sanity'
+import { fallbackSeo, seoMeta } from '../content/seo'
 
 export const Route = createFileRoute('/novyny')({
+  loader: () => getSiteContent(),
+  head: () => ({
+    meta: seoMeta(
+      fallbackSeo('Новини', 'Новини, оновлення і короткі звіти ГО «Побратими разом».'),
+    ),
+  }),
   component: News,
 })
 
 function News() {
+  const content = Route.useLoaderData()
+
   return (
-    <PagePlaceholder
-      title="Новини"
-      description="Список новин буде отримувати опубліковані записи з Sanity під час статичного білду."
+    <CollectionPage
+      eyebrow="Новини"
+      title="Оновлення організації"
+      summary="Публічні новини і короткі звіти, які будуть отримуватися з Sanity під час білду."
+      items={content.newsPosts}
     />
   )
 }

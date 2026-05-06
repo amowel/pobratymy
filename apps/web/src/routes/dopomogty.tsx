@@ -1,15 +1,21 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { PagePlaceholder } from '../components/PagePlaceholder'
+import { ContentPage } from '../components/ContentPage'
+import { getPageContent } from '../content/sanity'
+import { fallbackSeo, seoMeta } from '../content/seo'
 
 export const Route = createFileRoute('/dopomogty')({
+  loader: () => getPageContent('help'),
+  head: ({ loaderData }) => ({
+    meta: seoMeta(
+      loaderData?.seo ??
+        fallbackSeo('Як допомогти', 'Способи підтримати ГО «Побратими разом».'),
+    ),
+  }),
   component: Help,
 })
 
 function Help() {
-  return (
-    <PagePlaceholder
-      title="Як допомогти"
-      description="Сторінка підтримки міститиме перевірені реквізити, матеріальні потреби та контакти для партнерства."
-    />
-  )
+  const page = Route.useLoaderData()
+
+  return <ContentPage page={page} />
 }

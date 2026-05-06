@@ -149,10 +149,29 @@ pre code {
   max-width: 760px;
 }
 
+.content-shell-wide {
+  max-width: 920px;
+}
+
+.eyebrow,
+.meta {
+  margin: 0 0 0.8rem;
+  color: var(--field);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.meta {
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+}
+
 .hero-shell h1,
 .content-shell h1 {
   margin: 0;
-  max-width: 12ch;
+  max-width: 15ch;
   font-size: clamp(2.75rem, 7vw, 5.8rem);
   line-height: 0.98;
   letter-spacing: 0;
@@ -172,10 +191,150 @@ pre code {
   line-height: 1.7;
 }
 
+.hero-shell .lede,
+.content-shell .lede {
+  color: var(--ink);
+  font-size: clamp(1.12rem, 2vw, 1.35rem);
+  line-height: 1.55;
+}
+
 .action-row {
   display: flex;
   flex-wrap: wrap;
   gap: 0.8rem;
+  margin-top: 2rem;
+}
+
+.proof-band {
+  border-block: 1px solid var(--line);
+  background: color-mix(in oklch, var(--field-soft) 58%, var(--paper));
+}
+
+.proof-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1px;
+}
+
+.proof-item {
+  min-height: 7rem;
+  padding-block: 1.5rem;
+}
+
+.proof-item strong {
+  display: block;
+  max-width: 18ch;
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  line-height: 1.15;
+}
+
+.section-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.65fr) minmax(0, 1fr);
+  gap: clamp(2rem, 6vw, 5rem);
+  margin-block: clamp(3rem, 8vw, 6rem);
+}
+
+.section-grid h2 {
+  max-width: 12ch;
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.text-link {
+  display: inline-flex;
+  margin-top: 1.25rem;
+  font-weight: 800;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.compact-grid {
+  margin-top: 0;
+}
+
+.content-card {
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--paper-strong);
+  padding: 1.25rem;
+}
+
+.content-card h2,
+.content-card h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.content-card p {
+  margin: 0.85rem 0 0;
+  color: var(--ink-muted);
+  line-height: 1.6;
+}
+
+.rich-text {
+  max-width: 72ch;
+  margin-top: 2.5rem;
+}
+
+.rich-text h2,
+.rich-text h3 {
+  margin: 2rem 0 0;
+  letter-spacing: 0;
+  line-height: 1.15;
+}
+
+.rich-text h2 {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+}
+
+.rich-text h3 {
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+}
+
+.rich-text ul,
+.rich-text ol {
+  margin: 1rem 0 0;
+  padding-left: 1.25rem;
+  color: var(--ink-muted);
+  line-height: 1.7;
+}
+
+.rich-text blockquote,
+.callout,
+.empty-state {
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--paper-strong);
+  padding: 1rem;
+}
+
+.rich-text blockquote {
+  margin: 1.5rem 0 0;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.callout {
+  margin-top: 1.5rem;
+  color: var(--ink);
+}
+
+.callout-important {
+  border-color: color-mix(in oklch, var(--signal) 45%, var(--line));
+  background: color-mix(in oklch, var(--signal) 10%, var(--paper-strong));
+}
+
+.empty-state {
   margin-top: 2rem;
 }
 
@@ -191,4 +350,19 @@ pre code {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+}
+
+@media (max-width: 760px) {
+  .nav-links {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .section-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .compact-grid {
+    margin-top: 0.5rem;
+  }
 }
