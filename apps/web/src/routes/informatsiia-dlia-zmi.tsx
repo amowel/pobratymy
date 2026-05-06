@@ -4,7 +4,7 @@ import { getPageContent } from '../content/sanity'
 import { fallbackSeo, seoMeta } from '../content/seo'
 
 export const Route = createFileRoute('/informatsiia-dlia-zmi')({
-  loader: () => getPageContent('mediaInfo'),
+  loader: () => getPageContent({ data: 'mediaInfo' }),
   head: ({ loaderData }) => ({
     meta: seoMeta(
       loaderData?.seo ??

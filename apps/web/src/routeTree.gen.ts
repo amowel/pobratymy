@@ -20,6 +20,9 @@ import { Route as DopomogtyRouteImport } from './routes/dopomogty'
 import { Route as ContactsRouteImport } from './routes/contacts'
 import { Route as AboutUsRouteImport } from './routes/about-us'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProektyIndexRouteImport } from './routes/proekty.index'
+import { Route as NovynyIndexRouteImport } from './routes/novyny.index'
+import { Route as GalereiaIndexRouteImport } from './routes/galereia.index'
 import { Route as ProektySlugRouteImport } from './routes/proekty.$slug'
 import { Route as NovynySlugRouteImport } from './routes/novyny.$slug'
 import { Route as GalereiaSlugRouteImport } from './routes/galereia.$slug'
@@ -79,6 +82,21 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProektyIndexRoute = ProektyIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProektyRoute,
+} as any)
+const NovynyIndexRoute = NovynyIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => NovynyRoute,
+} as any)
+const GalereiaIndexRoute = GalereiaIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => GalereiaRoute,
+} as any)
 const ProektySlugRoute = ProektySlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -110,22 +128,25 @@ export interface FileRoutesByFullPath {
   '/galereia/$slug': typeof GalereiaSlugRoute
   '/novyny/$slug': typeof NovynySlugRoute
   '/proekty/$slug': typeof ProektySlugRoute
+  '/galereia/': typeof GalereiaIndexRoute
+  '/novyny/': typeof NovynyIndexRoute
+  '/proekty/': typeof ProektyIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about-us': typeof AboutUsRoute
   '/contacts': typeof ContactsRoute
   '/dopomogty': typeof DopomogtyRoute
-  '/galereia': typeof GalereiaRouteWithChildren
   '/gromadska-spilka': typeof GromadskaSpilkaRoute
   '/informatsiia-dlia-zmi': typeof InformatsiiaDliaZmiRoute
-  '/novyny': typeof NovynyRouteWithChildren
   '/pro-nas': typeof ProNasRoute
-  '/proekty': typeof ProektyRouteWithChildren
   '/video': typeof VideoRoute
   '/galereia/$slug': typeof GalereiaSlugRoute
   '/novyny/$slug': typeof NovynySlugRoute
   '/proekty/$slug': typeof ProektySlugRoute
+  '/galereia': typeof GalereiaIndexRoute
+  '/novyny': typeof NovynyIndexRoute
+  '/proekty': typeof ProektyIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -143,6 +164,9 @@ export interface FileRoutesById {
   '/galereia/$slug': typeof GalereiaSlugRoute
   '/novyny/$slug': typeof NovynySlugRoute
   '/proekty/$slug': typeof ProektySlugRoute
+  '/galereia/': typeof GalereiaIndexRoute
+  '/novyny/': typeof NovynyIndexRoute
+  '/proekty/': typeof ProektyIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -161,22 +185,25 @@ export interface FileRouteTypes {
     | '/galereia/$slug'
     | '/novyny/$slug'
     | '/proekty/$slug'
+    | '/galereia/'
+    | '/novyny/'
+    | '/proekty/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about-us'
     | '/contacts'
     | '/dopomogty'
-    | '/galereia'
     | '/gromadska-spilka'
     | '/informatsiia-dlia-zmi'
-    | '/novyny'
     | '/pro-nas'
-    | '/proekty'
     | '/video'
     | '/galereia/$slug'
     | '/novyny/$slug'
     | '/proekty/$slug'
+    | '/galereia'
+    | '/novyny'
+    | '/proekty'
   id:
     | '__root__'
     | '/'
@@ -193,6 +220,9 @@ export interface FileRouteTypes {
     | '/galereia/$slug'
     | '/novyny/$slug'
     | '/proekty/$slug'
+    | '/galereia/'
+    | '/novyny/'
+    | '/proekty/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -288,6 +318,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/proekty/': {
+      id: '/proekty/'
+      path: '/'
+      fullPath: '/proekty/'
+      preLoaderRoute: typeof ProektyIndexRouteImport
+      parentRoute: typeof ProektyRoute
+    }
+    '/novyny/': {
+      id: '/novyny/'
+      path: '/'
+      fullPath: '/novyny/'
+      preLoaderRoute: typeof NovynyIndexRouteImport
+      parentRoute: typeof NovynyRoute
+    }
+    '/galereia/': {
+      id: '/galereia/'
+      path: '/'
+      fullPath: '/galereia/'
+      preLoaderRoute: typeof GalereiaIndexRouteImport
+      parentRoute: typeof GalereiaRoute
+    }
     '/proekty/$slug': {
       id: '/proekty/$slug'
       path: '/$slug'
@@ -314,10 +365,12 @@ declare module '@tanstack/react-router' {
 
 interface GalereiaRouteChildren {
   GalereiaSlugRoute: typeof GalereiaSlugRoute
+  GalereiaIndexRoute: typeof GalereiaIndexRoute
 }
 
 const GalereiaRouteChildren: GalereiaRouteChildren = {
   GalereiaSlugRoute: GalereiaSlugRoute,
+  GalereiaIndexRoute: GalereiaIndexRoute,
 }
 
 const GalereiaRouteWithChildren = GalereiaRoute._addFileChildren(
@@ -326,10 +379,12 @@ const GalereiaRouteWithChildren = GalereiaRoute._addFileChildren(
 
 interface NovynyRouteChildren {
   NovynySlugRoute: typeof NovynySlugRoute
+  NovynyIndexRoute: typeof NovynyIndexRoute
 }
 
 const NovynyRouteChildren: NovynyRouteChildren = {
   NovynySlugRoute: NovynySlugRoute,
+  NovynyIndexRoute: NovynyIndexRoute,
 }
 
 const NovynyRouteWithChildren =
@@ -337,10 +392,12 @@ const NovynyRouteWithChildren =
 
 interface ProektyRouteChildren {
   ProektySlugRoute: typeof ProektySlugRoute
+  ProektyIndexRoute: typeof ProektyIndexRoute
 }
 
 const ProektyRouteChildren: ProektyRouteChildren = {
   ProektySlugRoute: ProektySlugRoute,
+  ProektyIndexRoute: ProektyIndexRoute,
 }
 
 const ProektyRouteWithChildren =

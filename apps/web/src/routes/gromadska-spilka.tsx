@@ -4,7 +4,7 @@ import { getPageContent } from '../content/sanity'
 import { fallbackSeo, seoMeta } from '../content/seo'
 
 export const Route = createFileRoute('/gromadska-spilka')({
-  loader: () => getPageContent('civicUnion'),
+  loader: () => getPageContent({ data: 'civicUnion' }),
   head: ({ loaderData }) => ({
     meta: seoMeta(
       loaderData?.seo ??

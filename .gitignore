@@ -20,4 +20,5 @@ worker-configuration.d.ts
 coverage
 playwright-report
 test-results
+.playwright-mcp
 todos.json

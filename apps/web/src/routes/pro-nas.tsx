@@ -4,7 +4,7 @@ import { getPageContent } from '../content/sanity'
 import { fallbackSeo, seoMeta } from '../content/seo'
 
 export const Route = createFileRoute('/pro-nas')({
-  loader: () => getPageContent('about'),
+  loader: () => getPageContent({ data: 'about' }),
   head: ({ loaderData }) => ({
     meta: seoMeta(
       loaderData?.seo ??
