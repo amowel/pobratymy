@@ -26,6 +26,7 @@ import { Route as GalereiaIndexRouteImport } from './routes/galereia.index'
 import { Route as ProektySlugRouteImport } from './routes/proekty.$slug'
 import { Route as NovynySlugRouteImport } from './routes/novyny.$slug'
 import { Route as GalereiaSlugRouteImport } from './routes/galereia.$slug'
+import { Route as ApiSanityRedeployRouteImport } from './routes/api.sanity-redeploy'
 
 const VideoRoute = VideoRouteImport.update({
   id: '/video',
@@ -112,6 +113,11 @@ const GalereiaSlugRoute = GalereiaSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => GalereiaRoute,
 } as any)
+const ApiSanityRedeployRoute = ApiSanityRedeployRouteImport.update({
+  id: '/api/sanity-redeploy',
+  path: '/api/sanity-redeploy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -125,6 +131,7 @@ export interface FileRoutesByFullPath {
   '/pro-nas': typeof ProNasRoute
   '/proekty': typeof ProektyRouteWithChildren
   '/video': typeof VideoRoute
+  '/api/sanity-redeploy': typeof ApiSanityRedeployRoute
   '/galereia/$slug': typeof GalereiaSlugRoute
   '/novyny/$slug': typeof NovynySlugRoute
   '/proekty/$slug': typeof ProektySlugRoute
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/informatsiia-dlia-zmi': typeof InformatsiiaDliaZmiRoute
   '/pro-nas': typeof ProNasRoute
   '/video': typeof VideoRoute
+  '/api/sanity-redeploy': typeof ApiSanityRedeployRoute
   '/galereia/$slug': typeof GalereiaSlugRoute
   '/novyny/$slug': typeof NovynySlugRoute
   '/proekty/$slug': typeof ProektySlugRoute
@@ -161,6 +169,7 @@ export interface FileRoutesById {
   '/pro-nas': typeof ProNasRoute
   '/proekty': typeof ProektyRouteWithChildren
   '/video': typeof VideoRoute
+  '/api/sanity-redeploy': typeof ApiSanityRedeployRoute
   '/galereia/$slug': typeof GalereiaSlugRoute
   '/novyny/$slug': typeof NovynySlugRoute
   '/proekty/$slug': typeof ProektySlugRoute
@@ -182,6 +191,7 @@ export interface FileRouteTypes {
     | '/pro-nas'
     | '/proekty'
     | '/video'
+    | '/api/sanity-redeploy'
     | '/galereia/$slug'
     | '/novyny/$slug'
     | '/proekty/$slug'
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/informatsiia-dlia-zmi'
     | '/pro-nas'
     | '/video'
+    | '/api/sanity-redeploy'
     | '/galereia/$slug'
     | '/novyny/$slug'
     | '/proekty/$slug'
@@ -217,6 +228,7 @@ export interface FileRouteTypes {
     | '/pro-nas'
     | '/proekty'
     | '/video'
+    | '/api/sanity-redeploy'
     | '/galereia/$slug'
     | '/novyny/$slug'
     | '/proekty/$slug'
@@ -237,6 +249,7 @@ export interface RootRouteChildren {
   ProNasRoute: typeof ProNasRoute
   ProektyRoute: typeof ProektyRouteWithChildren
   VideoRoute: typeof VideoRoute
+  ApiSanityRedeployRoute: typeof ApiSanityRedeployRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -360,6 +373,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GalereiaSlugRouteImport
       parentRoute: typeof GalereiaRoute
     }
+    '/api/sanity-redeploy': {
+      id: '/api/sanity-redeploy'
+      path: '/api/sanity-redeploy'
+      fullPath: '/api/sanity-redeploy'
+      preLoaderRoute: typeof ApiSanityRedeployRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -415,6 +435,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProNasRoute: ProNasRoute,
   ProektyRoute: ProektyRouteWithChildren,
   VideoRoute: VideoRoute,
+  ApiSanityRedeployRoute: ApiSanityRedeployRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

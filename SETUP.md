@@ -72,24 +72,36 @@ Cloudflare Builds setup:
    - `VITE_SANITY_DATASET=production`
    - `VITE_SITE_URL=https://pobratymy.com`
    - `CLOUDFLARE_INCLUDE_PROCESS_ENV=true`
-8. Create a Deploy Hook named `sanity-production` for branch `main` and copy
-   its URL.
+8. Create a Deploy Hook named `sanity-production` for branch `main` and keep
+   its URL private.
 
 ## Sanity Publish-to-Live
 
 The website is prerendered during Cloudflare Worker builds, so content publishes
-need to trigger a fresh web deploy. Use a Sanity webhook that POSTs directly to
-the Cloudflare Deploy Hook URL.
+need to trigger a fresh web deploy. Use a signed Sanity webhook that POSTs to
+the Worker endpoint. The Worker verifies the Sanity signature, then calls the
+Cloudflare Deploy Hook from a secret.
 
 One-time setup:
 
 1. Create the Cloudflare Deploy Hook described above.
-2. Create a Sanity document webhook:
-   - URL: the Cloudflare Deploy Hook URL
+2. Add Worker runtime secrets:
+
+   ```bash
+   pnpm --filter @pobratymy/web exec wrangler secret put SANITY_REDEPLOY_WEBHOOK_SECRET
+   pnpm --filter @pobratymy/web exec wrangler secret put CLOUDFLARE_DEPLOY_HOOK_URL
+   ```
+
+   Use a generated random value for `SANITY_REDEPLOY_WEBHOOK_SECRET`. Paste the
+   Cloudflare Deploy Hook URL as `CLOUDFLARE_DEPLOY_HOOK_URL`.
+
+3. Create a Sanity document webhook:
+   - URL: `https://pobratymy.com/api/sanity-redeploy`
    - Method: `POST`
    - Dataset: `production`
    - Trigger on: `create`, `update`, `delete`
    - Drafts/versions: disabled
+   - Secret: the same value as `SANITY_REDEPLOY_WEBHOOK_SECRET`
    - Filter:
 
      ```groq
@@ -108,8 +120,8 @@ One-time setup:
      }
      ```
 
-Keep the Deploy Hook URL private. Anyone with that URL can trigger a build, so
-rotate it in Cloudflare if it is exposed.
+Keep the Deploy Hook URL private. Do not paste it into Sanity. Anyone with that
+URL can trigger a build, so rotate it in Cloudflare if it is exposed.
 
 Manual local deploy, if needed:
 
