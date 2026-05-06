@@ -57,7 +57,7 @@ function CollectionItemCard({
 
   return (
     <Link to={detailRoute} params={params} className="content-card card-link">
-      {item.date ? <p className="meta">{formatDate(item.date)}</p> : null}
+      {item.date ? <p className="meta status-pill">{formatDate(item.date)}</p> : null}
       <h2>{item.title}</h2>
       <p>{item.summary}</p>
     </Link>

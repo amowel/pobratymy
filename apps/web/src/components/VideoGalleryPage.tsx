@@ -48,7 +48,7 @@ export function VideoGalleryPage({
                   )}
                   <div className="video-copy">
                     {video.date ? (
-                      <p className="meta">{formatDate(video.date)}</p>
+                      <p className="meta status-pill">{formatDate(video.date)}</p>
                     ) : null}
                     <h2>{video.title}</h2>
                     <p>{video.summary}</p>

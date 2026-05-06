@@ -9,6 +9,8 @@ const links = [
   { label: 'Контакти', to: '/contacts/' },
 ] as const
 
+const activeNavProps = { className: 'nav-link nav-link-active' } as const
+
 export default function Header() {
   return (
     <header className="site-header">
@@ -22,7 +24,12 @@ export default function Header() {
 
         <div className="nav-links">
           {links.map((link) => (
-            <Link key={link.to} to={link.to} className="nav-link">
+            <Link
+              key={link.to}
+              to={link.to}
+              className="nav-link"
+              activeProps={activeNavProps}
+            >
               {link.label}
             </Link>
           ))}

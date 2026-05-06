@@ -16,17 +16,39 @@ export function HomePage({ home, projects, newsPosts }: HomePageProps) {
 
   return (
     <main>
-      <section className="page-wrap hero-shell">
-        <p className="eyebrow">{home.eyebrow}</p>
-        <h1>{home.title}</h1>
-        <p className="lede">{home.summary}</p>
-        <div className="action-row">
-          <Link to="/dopomogty/" className="button-primary">
-            {home.primaryCta.label}
-          </Link>
-          <Link to="/proekty/" className="button-secondary">
-            {home.secondaryCta.label}
-          </Link>
+      <section className="page-wrap hero-shell hero-layout">
+        <div className="hero-copy">
+          <p className="eyebrow">{home.eyebrow}</p>
+          <h1>{home.title}</h1>
+          <p className="lede">{home.summary}</p>
+          <div className="action-row">
+            <Link to="/dopomogty/" className="button-primary">
+              {home.primaryCta.label}
+            </Link>
+            <Link to="/proekty/" className="button-secondary">
+              {home.secondaryCta.label}
+            </Link>
+          </div>
+        </div>
+
+        <div className="hero-visual" aria-label="Схема роботи організації">
+          <div className="hero-visual-header">
+            <span>запит</span>
+            <strong>перевірка / координація / передача</strong>
+          </div>
+          <div className="hero-visual-route">
+            {home.proofPoints.map((point, index) => (
+              <div key={point.label} className="route-step">
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <p>{point.label}</p>
+                <strong>{point.value}</strong>
+              </div>
+            ))}
+          </div>
+          <div className="hero-visual-note">
+            <span aria-hidden="true" />
+            <p>Допомога має бути зрозумілою, адресною і підтвердженою.</p>
+          </div>
         </div>
       </section>
 
@@ -79,7 +101,7 @@ function ProjectCard({ project }: { project: Project }) {
 
   return (
     <Link to="/proekty/$slug/" params={params} className="content-card card-link">
-      <p className="meta">{statusLabel(project.status)}</p>
+      <p className="meta status-pill">{statusLabel(project.status)}</p>
       <h3>{project.title}</h3>
       <p>{project.summary}</p>
     </Link>
