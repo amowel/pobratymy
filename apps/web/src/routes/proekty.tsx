@@ -25,6 +25,7 @@ function Projects() {
       title="Ініціативи та напрями роботи"
       summary="Проєкти мають показувати статус, контекст і зрозумілий спосіб підтримки."
       items={content.projects}
+      detailRoute="/proekty/$slug/"
     />
   )
 }

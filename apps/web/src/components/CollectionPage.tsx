@@ -1,10 +1,15 @@
+import { Link } from '@tanstack/react-router'
+import { useMemo } from 'react'
 import type { CollectionItem } from '../content/types'
+
+type DetailRoute = '/galereia/$slug/' | '/novyny/$slug/' | '/proekty/$slug/'
 
 interface CollectionPageProps {
   eyebrow: string
   title: string
   summary: string
   items: CollectionItem[]
+  detailRoute: DetailRoute
   emptyLabel?: string
 }
 
@@ -13,6 +18,7 @@ export function CollectionPage({
   title,
   summary,
   items,
+  detailRoute,
   emptyLabel = 'Матеріали з’являться після наповнення CMS.',
 }: CollectionPageProps) {
   return (
@@ -25,13 +31,11 @@ export function CollectionPage({
         {items.length > 0 ? (
           <div className="card-grid">
             {items.map((item) => (
-              <article key={item.href} className="content-card">
-                {item.date ? <p className="meta">{formatDate(item.date)}</p> : null}
-                <h2>
-                  <a href={item.href}>{item.title}</a>
-                </h2>
-                <p>{item.summary}</p>
-              </article>
+              <CollectionItemCard
+                key={item.href}
+                item={item}
+                detailRoute={detailRoute}
+              />
             ))}
           </div>
         ) : (
@@ -39,6 +43,24 @@ export function CollectionPage({
         )}
       </section>
     </main>
+  )
+}
+
+function CollectionItemCard({
+  item,
+  detailRoute,
+}: {
+  item: CollectionItem
+  detailRoute: DetailRoute
+}) {
+  const params = useMemo(() => ({ slug: item.slug }), [item.slug])
+
+  return (
+    <Link to={detailRoute} params={params} className="content-card card-link">
+      {item.date ? <p className="meta">{formatDate(item.date)}</p> : null}
+      <h2>{item.title}</h2>
+      <p>{item.summary}</p>
+    </Link>
   )
 }
 

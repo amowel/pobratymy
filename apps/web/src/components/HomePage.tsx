@@ -1,3 +1,5 @@
+import { Link } from '@tanstack/react-router'
+import { useMemo } from 'react'
 import type { HomeContent, NewsPost, Project } from '../content/types'
 
 interface HomePageProps {
@@ -19,12 +21,12 @@ export function HomePage({ home, projects, newsPosts }: HomePageProps) {
         <h1>{home.title}</h1>
         <p className="lede">{home.summary}</p>
         <div className="action-row">
-          <a href={home.primaryCta.href} className="button-primary">
+          <Link to="/dopomogty/" className="button-primary">
             {home.primaryCta.label}
-          </a>
-          <a href={home.secondaryCta.href} className="button-secondary">
+          </Link>
+          <Link to="/proekty/" className="button-secondary">
             {home.secondaryCta.label}
-          </a>
+          </Link>
         </div>
       </section>
 
@@ -43,19 +45,13 @@ export function HomePage({ home, projects, newsPosts }: HomePageProps) {
         <div>
           <p className="eyebrow">Проєкти</p>
           <h2>Робота, яку можна перевірити і підтримати.</h2>
-          <a href="/proekty/" className="text-link">
+          <Link to="/proekty/" className="text-link">
             Усі проєкти
-          </a>
+          </Link>
         </div>
         <div className="card-grid compact-grid">
           {featuredProjects.map((project) => (
-            <article key={project.slug} className="content-card">
-              <p className="meta">{statusLabel(project.status)}</p>
-              <h3>
-                <a href={project.href}>{project.title}</a>
-              </h3>
-              <p>{project.summary}</p>
-            </article>
+            <ProjectCard key={project.slug} project={project} />
           ))}
         </div>
       </section>
@@ -64,23 +60,41 @@ export function HomePage({ home, projects, newsPosts }: HomePageProps) {
         <div>
           <p className="eyebrow">Новини</p>
           <h2>Оновлення і матеріали організації.</h2>
-          <a href="/novyny/" className="text-link">
+          <Link to="/novyny/" className="text-link">
             Усі новини
-          </a>
+          </Link>
         </div>
         <div className="card-grid compact-grid">
           {featuredNews.map((post) => (
-            <article key={post.slug} className="content-card">
-              <p className="meta">{post.date}</p>
-              <h3>
-                <a href={post.href}>{post.title}</a>
-              </h3>
-              <p>{post.summary}</p>
-            </article>
+            <NewsCard key={post.slug} post={post} />
           ))}
         </div>
       </section>
     </main>
+  )
+}
+
+function ProjectCard({ project }: { project: Project }) {
+  const params = useMemo(() => ({ slug: project.slug }), [project.slug])
+
+  return (
+    <Link to="/proekty/$slug/" params={params} className="content-card card-link">
+      <p className="meta">{statusLabel(project.status)}</p>
+      <h3>{project.title}</h3>
+      <p>{project.summary}</p>
+    </Link>
+  )
+}
+
+function NewsCard({ post }: { post: NewsPost }) {
+  const params = useMemo(() => ({ slug: post.slug }), [post.slug])
+
+  return (
+    <Link to="/novyny/$slug/" params={params} className="content-card card-link">
+      <p className="meta">{post.date}</p>
+      <h3>{post.title}</h3>
+      <p>{post.summary}</p>
+    </Link>
   )
 }
 

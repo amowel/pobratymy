@@ -69,13 +69,14 @@ const contentQuery = `{
     title,
     "slug": slug.current,
     date,
-    description
+    "summary": pt::text(description)
   },
   "videos": *[_type == "video"] | order(publishedAt desc){
     title,
+    "slug": slug.current,
     publishedAt,
     sourceUrl,
-    description
+    "summary": description
   }
 }`
 
@@ -238,15 +239,19 @@ function normalizeAlbums(albums: Array<Partial<GalleryAlbum>> | undefined) {
 function normalizeVideos(videos: Array<Partial<VideoItem>> | undefined) {
   const normalized = (videos ?? [])
     .filter((video) => video.title && video.sourceUrl)
-    .map<VideoItem>((video) => ({
-      title: video.title!,
-      slug: video.slug ?? slugify(video.title!),
-      summary: video.summary ?? 'Відеоматеріал організації.',
-      publishedAt: video.publishedAt ?? '',
-      date: video.publishedAt?.slice(0, 10),
-      href: video.sourceUrl!,
-      sourceUrl: video.sourceUrl!,
-    }))
+    .map<VideoItem>((video) => {
+      const slug = video.slug ?? slugify(video.title!)
+
+      return {
+        title: video.title!,
+        slug,
+        summary: video.summary ?? 'Відеоматеріал організації.',
+        publishedAt: video.publishedAt ?? '',
+        date: video.publishedAt?.slice(0, 10),
+        href: `/video/#${slug}`,
+        sourceUrl: video.sourceUrl!,
+      }
+    })
 
   return normalized.length > 0 ? normalized : seedContent.videos
 }

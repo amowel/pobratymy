@@ -1,13 +1,13 @@
 import { Link } from '@tanstack/react-router'
 
 const links = [
-  ['Про нас', '/pro-nas/'],
-  ['Проєкти', '/proekty/'],
-  ['Новини', '/novyny/'],
-  ['Галерея', '/galereia/'],
-  ['Відео', '/video/'],
-  ['Контакти', '/contacts/'],
-]
+  { label: 'Про нас', to: '/pro-nas/' },
+  { label: 'Проєкти', to: '/proekty/' },
+  { label: 'Новини', to: '/novyny/' },
+  { label: 'Галерея', to: '/galereia/' },
+  { label: 'Відео', to: '/video/' },
+  { label: 'Контакти', to: '/contacts/' },
+] as const
 
 export default function Header() {
   return (
@@ -21,14 +21,14 @@ export default function Header() {
         </p>
 
         <div className="nav-links">
-          {links.map(([label, href]) => (
-            <a key={href} href={href} className="nav-link">
-              {label}
-            </a>
+          {links.map((link) => (
+            <Link key={link.to} to={link.to} className="nav-link">
+              {link.label}
+            </Link>
           ))}
-          <a href="/dopomogty/" className="support-link">
+          <Link to="/dopomogty/" className="support-link">
             Підтримати
-          </a>
+          </Link>
         </div>
       </nav>
     </header>

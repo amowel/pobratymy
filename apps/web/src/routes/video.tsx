@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { CollectionPage } from '../components/CollectionPage'
+import { VideoGalleryPage } from '../components/VideoGalleryPage'
 import { getSiteContent } from '../content/sanity'
 import { fallbackSeo, seoMeta } from '../content/seo'
 
@@ -20,11 +20,11 @@ function Video() {
   const content = Route.useLoaderData()
 
   return (
-    <CollectionPage
+    <VideoGalleryPage
       eyebrow="Відео"
       title="Відеоматеріали"
       summary="Зовнішні YouTube або Vimeo-посилання, структуровані в CMS без власного відеохостингу."
-      items={content.videos}
+      videos={content.videos}
     />
   )
 }

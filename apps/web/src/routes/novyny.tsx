@@ -22,6 +22,7 @@ function News() {
       title="Оновлення організації"
       summary="Публічні новини і короткі звіти, які будуть отримуватися з Sanity під час білду."
       items={content.newsPosts}
+      detailRoute="/novyny/$slug/"
     />
   )
 }

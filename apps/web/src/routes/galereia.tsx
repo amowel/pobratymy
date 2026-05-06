@@ -25,6 +25,7 @@ function Gallery() {
       title="Фото діяльності"
       summary="Фотоальбоми мають показувати реальну роботу організації і будуть наповнюватися через Sanity."
       items={content.galleryAlbums}
+      detailRoute="/galereia/$slug/"
     />
   )
 }
