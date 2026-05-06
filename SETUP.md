@@ -43,6 +43,14 @@ Use `pobratymy` as the Studio hostname if it is available, producing `https://po
 
 The public site is configured for Cloudflare Workers with Workers Assets through the official TanStack Start Cloudflare setup.
 
+Current Worker:
+
+- Account: `Genal.igor@gmail.com's Account`
+- Account ID: `670a46658b7d6e6b27e0c4799c760633`
+- Worker name: `pobratymy-web`
+- workers.dev subdomain: `pobratymy`
+- Preview URL: `https://pobratymy-web.pobratymy.workers.dev`
+
 Recommended deployment setup:
 
 1. Connect the GitHub repository in Cloudflare Workers Builds.
