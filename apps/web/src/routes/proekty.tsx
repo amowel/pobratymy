@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Outlet, createFileRoute, useLocation } from '@tanstack/react-router'
 import { CollectionPage } from '../components/CollectionPage'
 import { getSiteContent } from '../content/sanity'
 import { fallbackSeo, seoMeta } from '../content/seo'
@@ -18,6 +18,11 @@ export const Route = createFileRoute('/proekty')({
 
 function Projects() {
   const content = Route.useLoaderData()
+  const location = useLocation()
+
+  if (!isCollectionPath(location.pathname, '/proekty/')) {
+    return <Outlet />
+  }
 
   return (
     <CollectionPage
@@ -28,4 +33,8 @@ function Projects() {
       detailRoute="/proekty/$slug/"
     />
   )
+}
+
+function isCollectionPath(pathname: string, collectionPath: string) {
+  return pathname === collectionPath || `${pathname}/` === collectionPath
 }
