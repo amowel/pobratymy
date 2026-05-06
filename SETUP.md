@@ -1,0 +1,81 @@
+# Setup
+
+## Local Prerequisites
+
+- Node.js 24+
+- pnpm via Corepack
+
+```bash
+corepack enable pnpm
+pnpm install
+```
+
+## Sanity
+
+The Studio source lives in `apps/studio`, but the editing UI should be hosted by Sanity.
+
+Account-bound setup:
+
+```bash
+pnpm create sanity@latest --dataset production --template clean --typescript --output-path apps/studio
+```
+
+If creating the project through the Sanity dashboard instead, copy the project ID into:
+
+```bash
+SANITY_STUDIO_PROJECT_ID=
+SANITY_STUDIO_DATASET=production
+VITE_SANITY_PROJECT_ID=
+VITE_SANITY_DATASET=production
+```
+
+Preferred Studio hostname:
+
+```bash
+cd apps/studio
+pnpm sanity deploy
+```
+
+Use `pobratymy` as the Studio hostname if it is available, producing `https://pobratymy.sanity.studio`.
+
+## Cloudflare
+
+The public site is configured for Cloudflare Workers with Workers Assets through the official TanStack Start Cloudflare setup.
+
+Recommended deployment setup:
+
+1. Connect the GitHub repository in Cloudflare Workers Builds.
+2. Set the production branch to `main`.
+3. Build command: `pnpm build:web`.
+4. Deploy command: use Cloudflare's detected Worker deploy flow for the app in `apps/web`.
+5. Add Sanity project variables in Cloudflare build settings.
+6. Create a Cloudflare deploy hook.
+7. Add a Sanity webhook that calls the Cloudflare deploy hook on publish.
+
+Manual local deploy, if needed:
+
+```bash
+pnpm --filter @pobratymy/web deploy
+```
+
+## Quality Checks
+
+```bash
+pnpm lint
+pnpm format:check
+pnpm typecheck
+pnpm build
+pnpm check
+```
+
+The project intentionally starts without unit tests or Playwright. Add them later when real logic or critical interactive flows justify the overhead.
+
+## Ownership Transfer Notes
+
+For v1, accounts can live under personal ownership. Keep these ready for future transfer:
+
+- GitHub repository ownership transfer.
+- Cloudflare account/member transfer and DNS access.
+- Sanity project transfer or organization migration.
+- Environment variable inventory.
+- Deploy hook inventory.
