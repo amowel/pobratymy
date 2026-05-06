@@ -54,19 +54,63 @@ Current Worker:
 - workers.dev subdomain: `pobratymy`
 - Preview URL: `https://pobratymy-web.pobratymy.workers.dev`
 
-Recommended deployment setup:
+GitHub Actions deployment secrets:
 
-1. Connect the GitHub repository in Cloudflare Workers Builds.
-2. Set the production branch to `main`.
-3. Build command: `pnpm build:web`.
-4. Deploy command: use Cloudflare's detected Worker deploy flow for the app in `apps/web`.
-5. Add Sanity project variables in Cloudflare build settings.
-6. Create a Cloudflare deploy hook.
-7. Add a Sanity webhook that calls the Cloudflare deploy hook on publish.
+- `CLOUDFLARE_ACCOUNT_ID`: `670a46658b7d6e6b27e0c4799c760633`
+- `CLOUDFLARE_API_TOKEN`: Cloudflare API token with permission to deploy `pobratymy-web`.
 
-The public app currently falls back to typed seed content when `VITE_SANITY_PROJECT_ID`
-is missing. Once Sanity is configured, production builds should fetch published content
-from the public Sanity dataset during prerendering.
+The public app falls back to typed seed content when `VITE_SANITY_PROJECT_ID`
+is missing. The `Deploy Web` workflow provides the production Sanity variables
+so prerendering fetches published content from the public Sanity dataset.
+
+## Sanity Publish-to-Live
+
+The website is prerendered during Cloudflare Worker builds, so content publishes
+need to trigger a fresh web deploy. The Worker exposes a signed webhook endpoint
+that verifies Sanity requests and dispatches the `Deploy Web` GitHub Actions
+workflow.
+
+One-time setup:
+
+1. Create a fine-grained GitHub token for `amowel/pobratymy` with `Actions: Read and write`.
+2. Generate a webhook secret:
+
+   ```bash
+   openssl rand -hex 32
+   ```
+
+3. Store runtime Worker secrets:
+
+   ```bash
+   cd apps/web
+   pnpm exec wrangler secret put SANITY_REDEPLOY_WEBHOOK_SECRET
+   pnpm exec wrangler secret put GITHUB_REDEPLOY_TOKEN
+   ```
+
+4. Create a Sanity document webhook:
+   - URL: `https://pobratymy-web.pobratymy.workers.dev/api/sanity-redeploy`
+   - Dataset: `production`
+   - Trigger on: `create`, `update`, `delete`
+   - Drafts/versions: disabled
+   - Filter:
+
+     ```groq
+     _type in ["siteSettings", "page", "newsPost", "project", "galleryAlbum", "video", "person"]
+     ```
+
+   - Projection:
+
+     ```groq
+     {
+       "_id": _id,
+       "_type": _type,
+       "routeId": routeId,
+       "slug": slug.current,
+       "title": title
+     }
+     ```
+
+   - Secret: the same value stored in `SANITY_REDEPLOY_WEBHOOK_SECRET`.
 
 Manual local deploy, if needed:
 

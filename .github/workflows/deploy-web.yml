@@ -1,0 +1,75 @@
+name: Deploy Web
+
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: What triggered the deployment.
+        required: false
+        default: manual
+      document_id:
+        description: Sanity document id.
+        required: false
+      document_type:
+        description: Sanity document type.
+        required: false
+      operation:
+        description: Sanity document operation.
+        required: false
+      route_id:
+        description: Fixed page route id.
+        required: false
+      slug:
+        description: Document slug.
+        required: false
+      title:
+        description: Document title.
+        required: false
+
+concurrency:
+  group: web-deploy
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Build and deploy Cloudflare Worker
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_INCLUDE_PROCESS_ENV: 'true'
+      VITE_SANITY_DATASET: production
+      VITE_SANITY_PROJECT_ID: o109v8h2
+      VITE_SITE_URL: https://pobratymy.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.33.4 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify deploy secrets
+        run: |
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
+          test -n "$CLOUDFLARE_API_TOKEN"
+
+      - name: Run checks
+        run: pnpm check
+
+      - name: Deploy Worker
+        working-directory: apps/web
+        run: pnpm run deploy

@@ -54,6 +54,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@sanity/webhook':
+        specifier: 4.0.4
+        version: 4.0.4
       '@tanstack/react-router':
         specifier: latest
         version: 1.169.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -2756,6 +2759,10 @@ packages:
     peerDependenciesMeta:
       '@sanity/types':
         optional: true
+
+  '@sanity/webhook@4.0.4':
+    resolution: {integrity: sha512-c8LmzR5Wx93zJ10ohhp0XlmPrTNSFyvPcLbNY/sN45Wj5VOngz4FbBMbX9j64sSQLt+676U6OhiVfjs1yw3YCw==}
+    engines: {node: '>=20.0.0'}
 
   '@sanity/worker-channels@2.0.0':
     resolution: {integrity: sha512-mC+8yPQuw2rHXdHigFPU9thNa6vTaPmh7jFR6RvloE8s+6dmnk9bHdPXRbrrUqafxzK3L9aH2E170ubXyxcAIA==}
@@ -8630,6 +8637,8 @@ snapshots:
       '@sanity/client': 7.22.0
     optionalDependencies:
       '@sanity/types': 5.24.0(@types/react@19.2.14)
+
+  '@sanity/webhook@4.0.4': {}
 
   '@sanity/worker-channels@2.0.0': {}
 
