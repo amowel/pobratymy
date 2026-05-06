@@ -1,4 +1,5 @@
-import { defineArrayMember, defineType } from 'sanity'
+import { InfoOutlineIcon, LinkIcon } from '@sanity/icons'
+import { defineArrayMember, defineField, defineType } from 'sanity'
 
 export const portableText = defineType({
   name: 'portableText',
@@ -27,8 +28,9 @@ export const portableText = defineType({
             name: 'link',
             type: 'object',
             title: 'Link',
+            icon: LinkIcon,
             fields: [
-              {
+              defineField({
                 name: 'href',
                 type: 'url',
                 title: 'URL',
@@ -36,7 +38,7 @@ export const portableText = defineType({
                   rule.required().uri({
                     scheme: ['http', 'https', 'mailto', 'tel'],
                   }),
-              },
+              }),
             ],
           }),
         ],
@@ -49,8 +51,9 @@ export const portableText = defineType({
       name: 'callout',
       title: 'Callout',
       type: 'object',
+      icon: InfoOutlineIcon,
       fields: [
-        {
+        defineField({
           name: 'tone',
           title: 'Tone',
           type: 'string',
@@ -62,14 +65,15 @@ export const portableText = defineType({
             layout: 'radio',
           },
           initialValue: 'info',
-        },
-        {
+          validation: (rule) => rule.required(),
+        }),
+        defineField({
           name: 'text',
           title: 'Text',
           type: 'text',
           rows: 3,
           validation: (rule) => rule.required(),
-        },
+        }),
       ],
     }),
   ],

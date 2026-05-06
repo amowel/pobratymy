@@ -1,9 +1,12 @@
+import { DocumentTextIcon } from '@sanity/icons'
 import { defineField, defineType } from 'sanity'
+import { validateSlug } from '../lib/validation'
 
 export const newsPost = defineType({
   name: 'newsPost',
   title: 'News posts',
   type: 'document',
+  icon: DocumentTextIcon,
   fields: [
     defineField({
       name: 'title',
@@ -19,12 +22,13 @@ export const newsPost = defineType({
         source: 'title',
         maxLength: 96,
       },
-      validation: (rule) => rule.required(),
+      validation: (rule) => rule.required().custom(validateSlug),
     }),
     defineField({
       name: 'publishedAt',
       title: 'Published at',
       type: 'datetime',
+      initialValue: () => new Date().toISOString(),
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -32,7 +36,10 @@ export const newsPost = defineType({
       title: 'Summary',
       type: 'text',
       rows: 3,
-      validation: (rule) => rule.required(),
+      validation: (rule) => [
+        rule.required(),
+        rule.max(220).warning('Keep summaries concise for card previews.'),
+      ],
     }),
     defineField({
       name: 'coverImage',

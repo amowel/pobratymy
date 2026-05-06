@@ -1,9 +1,11 @@
+import { UserIcon } from '@sanity/icons'
 import { defineField, defineType } from 'sanity'
 
 export const person = defineType({
   name: 'person',
   title: 'People',
   type: 'document',
+  icon: UserIcon,
   fields: [
     defineField({
       name: 'name',
@@ -27,4 +29,11 @@ export const person = defineType({
       type: 'portableText',
     }),
   ],
+  preview: {
+    select: {
+      title: 'name',
+      subtitle: 'role',
+      media: 'photo.image',
+    },
+  },
 })

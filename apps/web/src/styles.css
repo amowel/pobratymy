@@ -399,6 +399,23 @@ pre code {
   color: var(--ink);
 }
 
+.rich-text-image {
+  margin: 1.75rem 0 0;
+}
+
+.rich-text-image img {
+  display: block;
+  width: 100%;
+  border-radius: 0.5rem;
+}
+
+.rich-text-image figcaption {
+  margin-top: 0.55rem;
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
 .callout-important {
   border-color: color-mix(in oklch, var(--signal) 45%, var(--line));
   background: color-mix(in oklch, var(--signal) 10%, var(--paper-strong));

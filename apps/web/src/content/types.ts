@@ -59,6 +59,13 @@ export type ContentBlock =
       tone: 'info' | 'important'
       text: string
     }
+  | {
+      type: 'image'
+      url: string
+      alt?: string
+      caption?: string
+      decorative?: boolean
+    }
 
 export interface PageContent {
   routeId: RouteId

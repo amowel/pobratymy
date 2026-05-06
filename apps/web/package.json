@@ -16,6 +16,7 @@
   "dependencies": {
     "@tanstack/react-router": "latest",
     "@tanstack/react-start": "latest",
+    "groq": "5.24.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

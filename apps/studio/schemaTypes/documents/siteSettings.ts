@@ -1,9 +1,11 @@
+import { CogIcon } from '@sanity/icons'
 import { defineArrayMember, defineField, defineType } from 'sanity'
 
 export const siteSettings = defineType({
   name: 'siteSettings',
   title: 'Site settings',
   type: 'document',
+  icon: CogIcon,
   fields: [
     defineField({
       name: 'title',

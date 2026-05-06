@@ -1,9 +1,11 @@
+import { LinkIcon } from '@sanity/icons'
 import { defineField, defineType } from 'sanity'
 
 export const socialLink = defineType({
   name: 'socialLink',
   title: 'Social link',
   type: 'object',
+  icon: LinkIcon,
   fields: [
     defineField({
       name: 'label',

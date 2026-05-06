@@ -1,9 +1,12 @@
+import { FolderIcon } from '@sanity/icons'
 import { defineArrayMember, defineField, defineType } from 'sanity'
+import { validateSlug } from '../lib/validation'
 
 export const project = defineType({
   name: 'project',
   title: 'Projects',
   type: 'document',
+  icon: FolderIcon,
   fields: [
     defineField({
       name: 'title',
@@ -19,7 +22,7 @@ export const project = defineType({
         source: 'title',
         maxLength: 96,
       },
-      validation: (rule) => rule.required(),
+      validation: (rule) => rule.required().custom(validateSlug),
     }),
     defineField({
       name: 'status',
@@ -42,7 +45,10 @@ export const project = defineType({
       title: 'Summary',
       type: 'text',
       rows: 3,
-      validation: (rule) => rule.required(),
+      validation: (rule) => [
+        rule.required(),
+        rule.max(220).warning('Keep summaries concise for card previews.'),
+      ],
     }),
     defineField({
       name: 'coverImage',
@@ -67,4 +73,11 @@ export const project = defineType({
       type: 'seoFields',
     }),
   ],
+  preview: {
+    select: {
+      title: 'title',
+      subtitle: 'status',
+      media: 'coverImage.image',
+    },
+  },
 })

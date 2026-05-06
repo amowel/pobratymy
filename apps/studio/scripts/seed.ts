@@ -7,7 +7,7 @@ import type {
   Project,
 } from '../../web/src/content/types'
 
-const client = getCliClient({ apiVersion: '2025-05-06' })
+const client = getCliClient({ apiVersion: '2026-05-06' })
 
 interface SeedDocument {
   _id: string
@@ -184,14 +184,18 @@ function toPortableText(blocks: ContentBlock[]): PortableTextNode[] {
       )
     }
 
-    return [
-      {
-        _type: 'callout',
-        _key: key(`callout-${index}-${block.text}`),
-        tone: block.tone,
-        text: block.text,
-      },
-    ]
+    if (block.type === 'callout') {
+      return [
+        {
+          _type: 'callout',
+          _key: key(`callout-${index}-${block.text}`),
+          tone: block.tone,
+          text: block.text,
+        },
+      ]
+    }
+
+    return []
   })
 }
 

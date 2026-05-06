@@ -44,6 +44,19 @@ export function RichText({ blocks }: RichTextProps) {
           )
         }
 
+        if (block.type === 'image') {
+          return (
+            <figure key={key} className="rich-text-image">
+              <img
+                src={block.url}
+                alt={block.decorative ? '' : (block.alt ?? '')}
+                loading="lazy"
+              />
+              {block.caption ? <figcaption>{block.caption}</figcaption> : null}
+            </figure>
+          )
+        }
+
         return <p key={key}>{block.text}</p>
       })}
     </div>
@@ -53,6 +66,10 @@ export function RichText({ blocks }: RichTextProps) {
 function blockKey(block: ContentBlock, salt: number) {
   if (block.type === 'list') {
     return `${block.type}:${block.style}:${block.items.join('|')}:${salt}`
+  }
+
+  if (block.type === 'image') {
+    return `${block.type}:${block.url}:${salt}`
   }
 
   return `${block.type}:${block.text}:${salt}`

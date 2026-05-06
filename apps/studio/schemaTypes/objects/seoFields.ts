@@ -1,9 +1,11 @@
+import { SearchIcon } from '@sanity/icons'
 import { defineField, defineType } from 'sanity'
 
 export const seoFields = defineType({
   name: 'seoFields',
   title: 'SEO',
   type: 'object',
+  icon: SearchIcon,
   fields: [
     defineField({
       name: 'title',

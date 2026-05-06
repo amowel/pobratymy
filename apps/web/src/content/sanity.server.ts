@@ -1,3 +1,4 @@
+import { defineQuery } from 'groq'
 import { seedContent } from './seed'
 import type {
   ContentBlock,
@@ -31,53 +32,94 @@ const routeEyebrows: Record<RouteId, string> = {
   mediaInfo: 'Для ЗМІ',
 }
 
-const contentQuery = `{
-  "settings": *[_type == "siteSettings"][0]{
+const sanityApiVersion = '2026-05-06'
+
+const seoFields = `
+  title,
+  description
+`
+
+const imageWithAltFields = `
+  alt,
+  decorative,
+  caption,
+  "url": image.asset->url
+`
+
+const portableTextFields = `
+  ...,
+  _type == "imageWithAlt" => {
+    ${imageWithAltFields}
+  }
+`
+
+const siteContentQuery = defineQuery(`{
+  "settings": *[_id == "siteSettings"][0]{
     title,
     phone,
     email,
     address,
-    socialLinks,
-    donationDetails,
-    defaultSeo
+    socialLinks[]{
+      label,
+      url
+    },
+    donationDetails[]{
+      label,
+      value
+    },
+    defaultSeo{
+      ${seoFields}
+    }
   },
-  "pages": *[_type == "page"]{
+  "pages": *[_type == "page" && defined(routeId)]{
     routeId,
     title,
     summary,
-    body,
-    seo
+    body[]{
+      ${portableTextFields}
+    },
+    seo{
+      ${seoFields}
+    }
   },
-  "newsPosts": *[_type == "newsPost"] | order(publishedAt desc){
+  "newsPosts": *[_type == "newsPost" && defined(slug.current)] | order(publishedAt desc, _id asc){
     title,
     "slug": slug.current,
     publishedAt,
     summary,
-    body,
-    seo
+    body[]{
+      ${portableTextFields}
+    },
+    seo{
+      ${seoFields}
+    }
   },
-  "projects": *[_type == "project"] | order(title asc){
+  "projects": *[_type == "project" && defined(slug.current)] | order(title asc, _id asc){
     title,
     "slug": slug.current,
     status,
     summary,
-    body,
-    seo
+    body[]{
+      ${portableTextFields}
+    },
+    seo{
+      ${seoFields}
+    }
   },
-  "galleryAlbums": *[_type == "galleryAlbum"] | order(date desc){
+  "galleryAlbums": *[_type == "galleryAlbum" && defined(slug.current)] | order(date desc, _id asc){
     title,
     "slug": slug.current,
     date,
-    "summary": pt::text(description)
+    "summary": coalesce(pt::text(description), "")
   },
-  "videos": *[_type == "video"] | order(publishedAt desc){
+  "videos": *[_type == "video" && defined(slug.current)] | order(publishedAt desc, _id asc){
     title,
     "slug": slug.current,
     publishedAt,
     sourceUrl,
     "summary": description
   }
-}`
+}`)
 
 interface SanityQueryResponse {
   result?: {
@@ -107,8 +149,8 @@ async function loadSiteContent(): Promise<SiteContent> {
   }
 
   try {
-    const params = new URLSearchParams({ query: contentQuery })
-    const url = `https://${projectId}.api.sanity.io/v2025-05-06/data/query/${dataset}?${params}`
+    const params = new URLSearchParams({ query: siteContentQuery })
+    const url = `https://${projectId}.api.sanity.io/v${sanityApiVersion}/data/query/${dataset}?${params}`
     const response = await fetch(url)
 
     if (!response.ok) {
@@ -272,6 +314,18 @@ function normalizeBlocks(value: unknown): ContentBlock[] {
         type: 'callout',
         tone: block.tone === 'important' ? 'important' : 'info',
         text: block.text,
+      })
+      continue
+    }
+
+    if (block._type === 'imageWithAlt' && typeof block.url === 'string') {
+      flushList()
+      blocks.push({
+        type: 'image',
+        url: block.url,
+        alt: typeof block.alt === 'string' ? block.alt : undefined,
+        caption: typeof block.caption === 'string' ? block.caption : undefined,
+        decorative: block.decorative === true,
       })
       continue
     }

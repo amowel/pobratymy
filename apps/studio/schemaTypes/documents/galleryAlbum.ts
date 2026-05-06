@@ -1,9 +1,12 @@
+import { ImagesIcon } from '@sanity/icons'
 import { defineArrayMember, defineField, defineType } from 'sanity'
+import { validateSlug } from '../lib/validation'
 
 export const galleryAlbum = defineType({
   name: 'galleryAlbum',
   title: 'Gallery albums',
   type: 'document',
+  icon: ImagesIcon,
   fields: [
     defineField({
       name: 'title',
@@ -19,7 +22,7 @@ export const galleryAlbum = defineType({
         source: 'title',
         maxLength: 96,
       },
-      validation: (rule) => rule.required(),
+      validation: (rule) => rule.required().custom(validateSlug),
     }),
     defineField({
       name: 'date',
@@ -44,4 +47,11 @@ export const galleryAlbum = defineType({
       type: 'portableText',
     }),
   ],
+  preview: {
+    select: {
+      title: 'title',
+      subtitle: 'date',
+      media: 'coverImage.image',
+    },
+  },
 })

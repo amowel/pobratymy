@@ -1,9 +1,11 @@
+import { ImageIcon } from '@sanity/icons'
 import { defineField, defineType } from 'sanity'
 
 export const imageWithAlt = defineType({
   name: 'imageWithAlt',
   title: 'Image',
   type: 'object',
+  icon: ImageIcon,
   fields: [
     defineField({
       name: 'image',
