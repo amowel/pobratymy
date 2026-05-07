@@ -44,25 +44,26 @@ body,
 }
 
 body {
+  display: flex;
+  min-height: 100dvh;
+  flex-direction: column;
   margin: 0;
   color: var(--ink);
   font-family: var(--font-sans);
   background:
     linear-gradient(
-        90deg,
-        color-mix(in oklch, var(--line) 18%, transparent) 1px,
-        transparent 1px
-      )
-      center / min(9rem, 22vw) 100%,
-    linear-gradient(
       115deg,
-      color-mix(in oklch, var(--blue-soft) 55%, transparent),
+      color-mix(in oklch, var(--blue-soft) 36%, transparent),
       transparent 28rem
     ),
-    linear-gradient(180deg, var(--paper-strong) 0%, var(--paper) 42%, #f5f0e5 100%);
+    linear-gradient(180deg, var(--paper-strong) 0%, var(--paper) 54%, #f4efe4 100%);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body > main {
+  flex: 1 0 auto;
 }
 
 a {
@@ -101,10 +102,10 @@ pre code {
 .site-header {
   position: sticky;
   top: 0;
+  flex-shrink: 0;
   z-index: 20;
   border-bottom: 1px solid color-mix(in oklch, var(--line) 82%, transparent);
-  background: color-mix(in oklch, var(--paper-strong) 86%, transparent);
-  backdrop-filter: blur(18px);
+  background: color-mix(in oklch, var(--paper-strong) 96%, var(--paper));
 }
 
 .site-nav {
@@ -381,26 +382,22 @@ pre code {
 
 .proof-band {
   border-block: 1px solid color-mix(in oklch, var(--field) 18%, var(--line));
-  background:
-    linear-gradient(
-        90deg,
-        color-mix(in oklch, var(--paper-strong) 68%, transparent) 0 1px,
-        transparent 1px 100%
-      )
-      0 / 5.5rem 100%,
-    color-mix(in oklch, var(--field-soft) 68%, var(--paper));
+  background: color-mix(in oklch, var(--field-soft) 58%, var(--paper-strong));
 }
 
 .proof-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: clamp(1rem, 4vw, 3rem);
+  gap: 0.9rem;
+  padding-block: clamp(1rem, 3vw, 1.5rem);
 }
 
 .proof-item {
-  min-height: 7rem;
-  border-left: 1px solid color-mix(in oklch, var(--field) 22%, var(--line));
-  padding: 1.5rem 0 1.5rem 1rem;
+  min-height: 6.5rem;
+  border: 1px solid color-mix(in oklch, var(--field) 18%, var(--line));
+  border-radius: 0.45rem;
+  background: color-mix(in oklch, var(--paper-strong) 58%, var(--field-soft));
+  padding: 1.15rem;
 }
 
 .proof-item strong {
@@ -431,19 +428,22 @@ pre code {
 .text-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.45rem;
   margin-top: 1.25rem;
+  color: var(--blue);
   font-weight: 800;
   text-decoration: none;
 }
 
-.text-link::after {
-  content: '->';
+.text-link-icon {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex: none;
   transition: transform 160ms ease;
 }
 
-.text-link:hover::after {
-  transform: translateX(0.2rem);
+.text-link:hover .text-link-icon {
+  transform: translate(0.15rem, -0.15rem);
 }
 
 .card-grid {
@@ -462,25 +462,10 @@ pre code {
   overflow: hidden;
   border: 1px solid color-mix(in oklch, var(--line) 88%, var(--paper-strong));
   border-radius: 0.55rem;
-  background:
-    linear-gradient(180deg, color-mix(in oklch, white 38%, transparent), transparent),
-    var(--paper-strong);
+  background: var(--paper-strong);
   padding: var(--space-lg);
+  padding-bottom: calc(var(--space-lg) + 2.25rem);
   box-shadow: 0 0.75rem 2rem color-mix(in oklch, var(--ink) 5%, transparent);
-}
-
-.content-card::before {
-  content: 'ПР';
-  position: absolute;
-  right: 0.9rem;
-  bottom: 0.75rem;
-  color: color-mix(in oklch, var(--field) 11%, transparent);
-  font-family: var(--font-display);
-  font-size: 3.6rem;
-  font-weight: 800;
-  line-height: 1;
-  pointer-events: none;
-  transition: opacity 160ms ease;
 }
 
 .card-link {
@@ -496,13 +481,38 @@ pre code {
 
 .card-link:hover {
   border-color: color-mix(in oklch, var(--blue) 52%, var(--line));
-  background: color-mix(in oklch, var(--field-soft) 32%, var(--paper-strong));
+  background: color-mix(in oklch, var(--field-soft) 24%, var(--paper-strong));
   box-shadow: var(--shadow);
   transform: translateY(-3px);
 }
 
-.card-link:hover::before {
-  opacity: 0.75;
+.card-affordance {
+  position: absolute;
+  right: 1.1rem;
+  bottom: 1.1rem;
+  display: inline-grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid color-mix(in oklch, var(--blue) 36%, var(--line));
+  border-radius: 999px;
+  color: var(--blue);
+  background: color-mix(in oklch, var(--paper-strong) 82%, var(--blue-soft));
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.card-affordance-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.card-link:hover .card-affordance {
+  color: var(--paper-strong);
+  background: var(--blue);
+  transform: translate(0.08rem, -0.08rem);
 }
 
 .content-card h2,
@@ -672,10 +682,11 @@ pre code {
 }
 
 .site-footer {
+  flex-shrink: 0;
   border-top: 1px solid var(--line);
   padding-block: 2.25rem;
   color: var(--ink-muted);
-  background: color-mix(in oklch, var(--paper-strong) 76%, transparent);
+  background: color-mix(in oklch, var(--paper-strong) 96%, var(--paper));
 }
 
 .footer-inner {

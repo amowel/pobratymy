@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { useMemo } from 'react'
 import type { CollectionItem } from '../content/types'
+import { ArrowUpRightIcon } from './ArrowUpRightIcon'
 
 type DetailRoute = '/galereia/$slug/' | '/novyny/$slug/' | '/proekty/$slug/'
 
@@ -60,6 +61,9 @@ function CollectionItemCard({
       {item.date ? <p className="meta status-pill">{formatDate(item.date)}</p> : null}
       <h2>{item.title}</h2>
       <p>{item.summary}</p>
+      <span className="card-affordance" aria-hidden="true">
+        <ArrowUpRightIcon className="card-affordance-icon" />
+      </span>
     </Link>
   )
 }

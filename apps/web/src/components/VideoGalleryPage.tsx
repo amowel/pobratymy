@@ -1,5 +1,6 @@
 /* eslint-disable react/iframe-missing-sandbox -- YouTube and Vimeo embeds require their provider runtime to render and play. */
 import type { VideoItem } from '../content/types'
+import { ArrowUpRightIcon } from './ArrowUpRightIcon'
 
 interface VideoGalleryPageProps {
   eyebrow: string
@@ -58,7 +59,8 @@ export function VideoGalleryPage({
                       target="_blank"
                       rel="noreferrer"
                     >
-                      Відкрити джерело
+                      <span>Відкрити джерело</span>
+                      <ArrowUpRightIcon className="text-link-icon" />
                     </a>
                   </div>
                 </article>

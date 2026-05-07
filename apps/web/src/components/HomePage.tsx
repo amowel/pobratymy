@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { useMemo } from 'react'
 import type { HomeContent, NewsPost, Project } from '../content/types'
+import { ArrowUpRightIcon } from './ArrowUpRightIcon'
 
 interface HomePageProps {
   home: HomeContent
@@ -68,7 +69,8 @@ export function HomePage({ home, projects, newsPosts }: HomePageProps) {
           <p className="eyebrow">Проєкти</p>
           <h2>Робота, яку можна перевірити і підтримати.</h2>
           <Link to="/proekty/" className="text-link">
-            Усі проєкти
+            <span>Усі проєкти</span>
+            <ArrowUpRightIcon className="text-link-icon" />
           </Link>
         </div>
         <div className="card-grid compact-grid">
@@ -83,7 +85,8 @@ export function HomePage({ home, projects, newsPosts }: HomePageProps) {
           <p className="eyebrow">Новини</p>
           <h2>Оновлення і матеріали організації.</h2>
           <Link to="/novyny/" className="text-link">
-            Усі новини
+            <span>Усі новини</span>
+            <ArrowUpRightIcon className="text-link-icon" />
           </Link>
         </div>
         <div className="card-grid compact-grid">
@@ -104,6 +107,9 @@ function ProjectCard({ project }: { project: Project }) {
       <p className="meta status-pill">{statusLabel(project.status)}</p>
       <h3>{project.title}</h3>
       <p>{project.summary}</p>
+      <span className="card-affordance" aria-hidden="true">
+        <ArrowUpRightIcon className="card-affordance-icon" />
+      </span>
     </Link>
   )
 }
@@ -116,6 +122,9 @@ function NewsCard({ post }: { post: NewsPost }) {
       <p className="meta">{post.date}</p>
       <h3>{post.title}</h3>
       <p>{post.summary}</p>
+      <span className="card-affordance" aria-hidden="true">
+        <ArrowUpRightIcon className="card-affordance-icon" />
+      </span>
     </Link>
   )
 }
