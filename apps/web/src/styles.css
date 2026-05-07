@@ -202,7 +202,7 @@ pre code {
 
 .hero-shell,
 .content-shell {
-  margin-block: clamp(3.2rem, 8vw, 7rem);
+  margin-block: clamp(3rem, 7vw, 6rem);
   max-width: 780px;
 }
 
@@ -254,12 +254,12 @@ pre code {
 }
 
 .content-shell h1 {
-  max-width: 16ch;
-  font-size: clamp(2.25rem, 5vw, 4.5rem);
+  max-width: 17ch;
+  font-size: clamp(2.35rem, 4.35vw, 4rem);
+  line-height: 1;
 }
 
-.hero-shell p,
-.content-shell p {
+.hero-shell p {
   max-width: 62ch;
   margin-block: 1.4rem 0;
   color: var(--ink-muted);
@@ -267,11 +267,26 @@ pre code {
   line-height: 1.7;
 }
 
-.hero-shell .lede,
-.content-shell .lede {
+.content-shell p {
+  max-width: 62ch;
+  margin-block: 1.25rem 0;
+  color: var(--ink-muted);
+  font-size: 1.05rem;
+  line-height: 1.68;
+}
+
+.hero-shell .lede {
   color: var(--ink);
   font-size: clamp(1.12rem, 2vw, 1.35rem);
   line-height: 1.58;
+  text-wrap: pretty;
+}
+
+.content-shell .lede {
+  max-width: 64ch;
+  color: var(--ink);
+  font-size: clamp(1.06rem, 1.45vw, 1.18rem);
+  line-height: 1.65;
   text-wrap: pretty;
 }
 
@@ -607,35 +622,66 @@ pre code {
 }
 
 .rich-text {
-  max-width: 72ch;
-  margin-top: 2.5rem;
+  max-width: 66ch;
+  margin-top: clamp(2rem, 4vw, 3rem);
   border-top: 1px solid var(--line);
-  padding-top: 0.75rem;
+  padding-top: 1.35rem;
 }
 
 .rich-text h2,
 .rich-text h3 {
-  margin: 2rem 0 0;
-  font-family: var(--font-display);
-  font-weight: 690;
-  letter-spacing: 0;
-  line-height: 1.15;
+  margin: 1.8rem 0 0;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-weight: 850;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.rich-text > :first-child {
+  margin-top: 0;
 }
 
 .rich-text h2 {
-  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-size: clamp(1.35rem, 2vw, 1.7rem);
 }
 
 .rich-text h3 {
-  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  font-size: clamp(1.15rem, 1.4vw, 1.32rem);
+}
+
+.rich-text p {
+  max-width: 64ch;
+  margin: 0.8rem 0 0;
+  color: var(--ink-muted);
+  font-size: 1rem;
+  line-height: 1.72;
 }
 
 .rich-text ul,
 .rich-text ol {
-  margin: 1rem 0 0;
-  padding-left: 1.25rem;
+  margin: 0.9rem 0 0;
+  padding-left: 1.35rem;
   color: var(--ink-muted);
-  line-height: 1.7;
+  font-size: 1rem;
+  line-height: 1.68;
+}
+
+.rich-text ul {
+  list-style: disc;
+}
+
+.rich-text ol {
+  list-style: decimal;
+}
+
+.rich-text li + li {
+  margin-top: 0.4rem;
+}
+
+.rich-text li::marker {
+  color: var(--field);
 }
 
 .rich-text blockquote,
@@ -651,12 +697,16 @@ pre code {
 .rich-text blockquote {
   margin: 1.5rem 0 0;
   color: var(--ink);
+  font-size: 1rem;
   font-weight: 700;
+  line-height: 1.62;
 }
 
 .callout {
   margin-top: 1.5rem;
   color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.62;
 }
 
 .rich-text-image {
@@ -753,9 +803,25 @@ pre code {
     grid-template-columns: 1fr;
   }
 
-  .hero-shell h1,
-  .content-shell h1 {
+  .hero-shell h1 {
     font-size: clamp(2.35rem, 13vw, 3.8rem);
+  }
+
+  .content-shell h1 {
+    font-size: clamp(2.1rem, 10vw, 3rem);
+    line-height: 1.04;
+  }
+
+  .content-shell .lede {
+    font-size: 1.03rem;
+  }
+
+  .rich-text {
+    margin-top: 2rem;
+  }
+
+  .rich-text h2 {
+    font-size: 1.28rem;
   }
 
   .route-step {
