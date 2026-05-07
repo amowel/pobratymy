@@ -244,9 +244,13 @@ pre code {
   font-family: var(--font-display);
   font-weight: 720;
   text-wrap: balance;
-  font-size: clamp(3.1rem, 7vw, 6.6rem);
-  line-height: 0.92;
+  line-height: 0.96;
   letter-spacing: -0.02em;
+}
+
+.hero-shell h1 {
+  max-width: 16ch;
+  font-size: clamp(2.9rem, 5.35vw, 5.35rem);
 }
 
 .content-shell h1 {
