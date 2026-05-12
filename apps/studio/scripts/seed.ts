@@ -5,6 +5,7 @@ import type {
   GalleryAlbum,
   NewsPost,
   Project,
+  RichTextInline,
 } from '../../web/src/content/types'
 
 const client = getCliClient({ apiVersion: '2026-05-06' })
@@ -174,14 +175,16 @@ function toPortableText(blocks: ContentBlock[]): PortableTextNode[] {
     }
 
     if (block.type === 'list') {
-      return block.items.map((item, itemIndex) =>
-        textBlock({
-          seed: `list-${index}-${itemIndex}-${item}`,
+      return block.items.map((item, itemIndex) => {
+        const text = inlineText(item)
+
+        return textBlock({
+          seed: `list-${index}-${itemIndex}-${text}`,
           style: 'normal',
-          text: item,
+          text,
           listItem: block.style,
-        }),
-      )
+        })
+      })
     }
 
     if (block.type === 'callout') {
@@ -197,6 +200,10 @@ function toPortableText(blocks: ContentBlock[]): PortableTextNode[] {
 
     return []
   })
+}
+
+function inlineText(value: string | RichTextInline[]) {
+  return typeof value === 'string' ? value : value.map((child) => child.text).join('')
 }
 
 function textBlock({

@@ -69,7 +69,7 @@ export const video = defineType({
     defineField({
       name: 'thumbnail',
       title: 'Thumbnail',
-      type: 'imageWithAlt',
+      type: 'optionalImageWithAlt',
     }),
     defineField({
       name: 'description',

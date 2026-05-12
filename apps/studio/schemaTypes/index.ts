@@ -6,6 +6,7 @@ import { project } from './documents/project'
 import { siteSettings } from './documents/siteSettings'
 import { video } from './documents/video'
 import { imageWithAlt } from './objects/imageWithAlt'
+import { optionalImageWithAlt } from './objects/optionalImageWithAlt'
 import { portableText } from './objects/portableText'
 import { seoFields } from './objects/seoFields'
 import { socialLink } from './objects/socialLink'
@@ -19,6 +20,7 @@ export const schemaTypes = [
   video,
   person,
   imageWithAlt,
+  optionalImageWithAlt,
   portableText,
   seoFields,
   socialLink,
