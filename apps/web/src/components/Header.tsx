@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import type { SiteSettings } from '../content/types'
 
 const links = [
   { label: 'Про нас', to: '/pro-nas/' },
@@ -11,14 +12,24 @@ const links = [
 
 const activeNavProps = { className: 'nav-link nav-link-active' } as const
 
-export default function Header() {
+export default function Header({ settings }: { settings?: SiteSettings }) {
+  const title = settings?.title || 'Побратими разом'
+
   return (
     <header className="site-header">
       <nav className="page-wrap site-nav" aria-label="Головна навігація">
         <p className="m-0 flex-shrink-0 text-base font-semibold tracking-tight">
-          <Link to="/" className="brand-link" aria-label="Побратими разом, на головну">
-            <span className="brand-mark" aria-hidden="true" />
-            Побратими разом
+          <Link to="/" className="brand-link" aria-label={`${title}, на головну`}>
+            {settings?.logo ? (
+              <img
+                src={settings.logo.url}
+                alt={settings.logo.decorative ? '' : (settings.logo.alt ?? '')}
+                className="brand-logo"
+              />
+            ) : (
+              <span className="brand-mark" aria-hidden="true" />
+            )}
+            {title}
           </Link>
         </p>
 

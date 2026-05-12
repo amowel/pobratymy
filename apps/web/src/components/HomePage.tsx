@@ -104,6 +104,12 @@ function ProjectCard({ project }: { project: Project }) {
 
   return (
     <Link to="/proekty/$slug/" params={params} className="content-card card-link">
+      {project.coverImage ? (
+        <CardCover
+          url={project.coverImage.url}
+          alt={project.coverImage.decorative ? '' : (project.coverImage.alt ?? '')}
+        />
+      ) : null}
       <p className="meta status-pill">{statusLabel(project.status)}</p>
       <h3>{project.title}</h3>
       <p>{project.summary}</p>
@@ -119,6 +125,12 @@ function NewsCard({ post }: { post: NewsPost }) {
 
   return (
     <Link to="/novyny/$slug/" params={params} className="content-card card-link">
+      {post.coverImage ? (
+        <CardCover
+          url={post.coverImage.url}
+          alt={post.coverImage.decorative ? '' : (post.coverImage.alt ?? '')}
+        />
+      ) : null}
       <p className="meta">{post.date}</p>
       <h3>{post.title}</h3>
       <p>{post.summary}</p>
@@ -126,6 +138,14 @@ function NewsCard({ post }: { post: NewsPost }) {
         <ArrowUpRightIcon className="card-affordance-icon" />
       </span>
     </Link>
+  )
+}
+
+function CardCover({ url, alt }: { url: string; alt: string }) {
+  return (
+    <div className="card-cover">
+      <img src={url} alt={alt} loading="lazy" />
+    </div>
   )
 }
 

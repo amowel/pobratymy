@@ -44,7 +44,18 @@ export function VideoGalleryPage({
                     </div>
                   ) : (
                     <a href={video.sourceUrl} className="video-fallback">
-                      Відкрити відео
+                      {video.thumbnail ? (
+                        <img
+                          src={video.thumbnail.url}
+                          alt={
+                            video.thumbnail.decorative
+                              ? ''
+                              : (video.thumbnail.alt ?? '')
+                          }
+                          loading="lazy"
+                        />
+                      ) : null}
+                      <span>Відкрити відео</span>
                     </a>
                   )}
                   <div className="video-copy">

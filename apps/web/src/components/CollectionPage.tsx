@@ -58,6 +58,15 @@ function CollectionItemCard({
 
   return (
     <Link to={detailRoute} params={params} className="content-card card-link">
+      {item.coverImage ? (
+        <div className="card-cover" aria-hidden={item.coverImage.decorative}>
+          <img
+            src={item.coverImage.url}
+            alt={item.coverImage.decorative ? '' : (item.coverImage.alt ?? '')}
+            loading="lazy"
+          />
+        </div>
+      ) : null}
       {item.date ? <p className="meta status-pill">{formatDate(item.date)}</p> : null}
       <h2>{item.title}</h2>
       <p>{item.summary}</p>

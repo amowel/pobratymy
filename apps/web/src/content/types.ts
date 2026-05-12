@@ -12,6 +12,15 @@ export type ProjectStatus = 'planned' | 'active' | 'completed' | 'archived'
 export interface SeoFields {
   title: string
   description: string
+  image?: ImageAttachment
+}
+
+export interface ImageAttachment {
+  key?: string
+  url: string
+  alt?: string
+  caption?: string
+  decorative?: boolean
 }
 
 export interface SocialLink {
@@ -24,9 +33,17 @@ export interface DonationDetail {
   value: string
 }
 
+export interface RichTextInline {
+  key?: string
+  text: string
+  marks?: Array<'strong' | 'em'>
+  href?: string
+}
+
 export interface SiteSettings {
   title: string
   description: string
+  logo?: ImageAttachment
   phone?: string
   email?: string
   address?: string
@@ -40,19 +57,22 @@ export type ContentBlock =
       type: 'heading'
       level: 2 | 3
       text: string
+      children?: RichTextInline[]
     }
   | {
       type: 'paragraph'
       text: string
+      children?: RichTextInline[]
     }
   | {
       type: 'list'
       style: 'bullet' | 'number'
-      items: string[]
+      items: Array<string | RichTextInline[]>
     }
   | {
       type: 'quote'
       text: string
+      children?: RichTextInline[]
     }
   | {
       type: 'callout'
@@ -73,6 +93,7 @@ export interface PageContent {
   eyebrow: string
   title: string
   summary: string
+  coverImage?: ImageAttachment
   body: ContentBlock[]
   seo: SeoFields
 }
@@ -104,6 +125,7 @@ export interface CollectionItem {
   summary: string
   date?: string
   href: string
+  coverImage?: ImageAttachment
 }
 
 export interface NewsPost extends CollectionItem {
@@ -115,16 +137,27 @@ export interface NewsPost extends CollectionItem {
 export interface Project extends CollectionItem {
   status: ProjectStatus
   body: ContentBlock[]
+  gallery: ImageAttachment[]
   seo: SeoFields
 }
 
 export interface GalleryAlbum extends CollectionItem {
   date: string
+  body: ContentBlock[]
+  photos: ImageAttachment[]
 }
 
 export interface VideoItem extends CollectionItem {
   publishedAt: string
   sourceUrl: string
+  thumbnail?: ImageAttachment
+}
+
+export interface Person {
+  name: string
+  role?: string
+  photo?: ImageAttachment
+  bio: ContentBlock[]
 }
 
 export interface SiteContent {
@@ -135,4 +168,5 @@ export interface SiteContent {
   projects: Project[]
   galleryAlbums: GalleryAlbum[]
   videos: VideoItem[]
+  people: Person[]
 }

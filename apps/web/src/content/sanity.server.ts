@@ -3,9 +3,12 @@ import { seedContent } from './seed'
 import type {
   ContentBlock,
   GalleryAlbum,
+  ImageAttachment,
   NewsPost,
   PageContent,
+  Person,
   Project,
+  RichTextInline,
   RouteId,
   SeoFields,
   SiteContent,
@@ -34,16 +37,20 @@ const routeEyebrows: Record<RouteId, string> = {
 
 const sanityApiVersion = '2026-05-06'
 
-const seoFields = `
-  title,
-  description
-`
-
 const imageWithAltFields = `
+  _key,
   alt,
   decorative,
   caption,
   "url": image.asset->url
+`
+
+const seoFields = `
+  title,
+  description,
+  image{
+    ${imageWithAltFields}
+  }
 `
 
 const portableTextFields = `
@@ -56,6 +63,9 @@ const portableTextFields = `
 const siteContentQuery = defineQuery(`{
   "settings": *[_id == "siteSettings"][0]{
     title,
+    logo{
+      ${imageWithAltFields}
+    },
     phone,
     email,
     address,
@@ -75,6 +85,9 @@ const siteContentQuery = defineQuery(`{
     routeId,
     title,
     summary,
+    coverImage{
+      ${imageWithAltFields}
+    },
     body[]{
       ${portableTextFields}
     },
@@ -87,6 +100,9 @@ const siteContentQuery = defineQuery(`{
     "slug": slug.current,
     publishedAt,
     summary,
+    coverImage{
+      ${imageWithAltFields}
+    },
     body[]{
       ${portableTextFields}
     },
@@ -99,8 +115,14 @@ const siteContentQuery = defineQuery(`{
     "slug": slug.current,
     status,
     summary,
+    coverImage{
+      ${imageWithAltFields}
+    },
     body[]{
       ${portableTextFields}
+    },
+    gallery[]{
+      ${imageWithAltFields}
     },
     seo{
       ${seoFields}
@@ -110,6 +132,15 @@ const siteContentQuery = defineQuery(`{
     title,
     "slug": slug.current,
     date,
+    coverImage{
+      ${imageWithAltFields}
+    },
+    photos[]{
+      ${imageWithAltFields}
+    },
+    "body": description[]{
+      ${portableTextFields}
+    },
     "summary": coalesce(pt::text(description), "")
   },
   "videos": *[_type == "video" && defined(slug.current)] | order(publishedAt desc, _id asc){
@@ -117,7 +148,20 @@ const siteContentQuery = defineQuery(`{
     "slug": slug.current,
     publishedAt,
     sourceUrl,
+    thumbnail{
+      ${imageWithAltFields}
+    },
     "summary": description
+  },
+  "people": *[_type == "person"] | order(name asc, _id asc){
+    name,
+    role,
+    photo{
+      ${imageWithAltFields}
+    },
+    bio[]{
+      ${portableTextFields}
+    }
   }
 }`)
 
@@ -129,6 +173,7 @@ interface SanityQueryResponse {
     projects?: Array<Partial<Project>>
     galleryAlbums?: Array<Partial<GalleryAlbum>>
     videos?: Array<Partial<VideoItem>>
+    people?: Array<Partial<Person>>
   }
 }
 
@@ -183,26 +228,45 @@ function normalizeContent(result: SanityQueryResponse['result']): SiteContent {
       eyebrow: routeEyebrows[page.routeId],
       title: page.title,
       summary: page.summary,
+      coverImage: normalizeImage(page.coverImage),
       body: normalizeBlocks(page.body),
       seo: normalizeSeo(page.seo, page.title, page.summary),
     }
   }
 
   return {
-    settings: {
-      ...seedContent.settings,
-      ...result.settings,
-      socialLinks: result.settings?.socialLinks ?? seedContent.settings.socialLinks,
-      donationDetails:
-        result.settings?.donationDetails ?? seedContent.settings.donationDetails,
-      defaultSeo: result.settings?.defaultSeo ?? seedContent.settings.defaultSeo,
-    },
-    home: seedContent.home,
+    settings: normalizeSettings(result.settings),
+    home: normalizeHome(pages.home),
     pages,
     newsPosts: normalizeNewsPosts(result.newsPosts),
     projects: normalizeProjects(result.projects),
     galleryAlbums: normalizeAlbums(result.galleryAlbums),
     videos: normalizeVideos(result.videos),
+    people: normalizePeople(result.people),
+  }
+}
+
+function normalizeSettings(settings: Partial<SiteContent['settings']> | undefined) {
+  return {
+    ...seedContent.settings,
+    ...settings,
+    logo: normalizeImage(settings?.logo),
+    socialLinks: settings?.socialLinks ?? seedContent.settings.socialLinks,
+    donationDetails: settings?.donationDetails ?? seedContent.settings.donationDetails,
+    defaultSeo: normalizeSeo(
+      settings?.defaultSeo,
+      seedContent.settings.defaultSeo.title,
+      seedContent.settings.defaultSeo.description,
+    ),
+  }
+}
+
+function normalizeHome(homePage: PageContent): SiteContent['home'] {
+  return {
+    ...seedContent.home,
+    title: homePage.title || seedContent.home.title,
+    summary: homePage.summary || seedContent.home.summary,
+    seo: homePage.seo ?? seedContent.home.seo,
   }
 }
 
@@ -213,6 +277,7 @@ function normalizeNewsPosts(posts: Array<Partial<NewsPost>> | undefined) {
       title: post.title!,
       slug: post.slug!,
       summary: post.summary!,
+      coverImage: normalizeImage(post.coverImage),
       publishedAt: post.publishedAt!,
       date: post.publishedAt!.slice(0, 10),
       href: `/novyny/${post.slug!}/`,
@@ -231,8 +296,10 @@ function normalizeProjects(projects: Array<Partial<Project>> | undefined) {
       slug: project.slug!,
       summary: project.summary!,
       status: project.status ?? 'active',
+      coverImage: normalizeImage(project.coverImage),
       href: `/proekty/${project.slug!}/`,
       body: normalizeBlocks(project.body),
+      gallery: normalizeImages(project.gallery),
       seo: normalizeSeo(project.seo, project.title!, project.summary!),
     }))
 
@@ -248,6 +315,9 @@ function normalizeAlbums(albums: Array<Partial<GalleryAlbum>> | undefined) {
       summary: album.summary ?? 'Фотоальбом організації.',
       date: album.date!,
       href: `/galereia/${album.slug!}/`,
+      coverImage: normalizeImage(album.coverImage),
+      body: normalizeBlocks(album.body),
+      photos: normalizeImages(album.photos),
     }))
 
   return normalized.length > 0 ? normalized : seedContent.galleryAlbums
@@ -267,10 +337,22 @@ function normalizeVideos(videos: Array<Partial<VideoItem>> | undefined) {
         date: video.publishedAt?.slice(0, 10),
         href: `/video/#${slug}`,
         sourceUrl: video.sourceUrl!,
+        thumbnail: normalizeImage(video.thumbnail),
       }
     })
 
   return normalized.length > 0 ? normalized : seedContent.videos
+}
+
+function normalizePeople(people: Array<Partial<Person>> | undefined) {
+  return (people ?? [])
+    .filter((person) => person.name)
+    .map<Person>((person) => ({
+      name: person.name!,
+      role: person.role,
+      photo: normalizeImage(person.photo),
+      bio: normalizeBlocks(person.bio),
+    }))
 }
 
 function normalizeSeo(
@@ -281,6 +363,7 @@ function normalizeSeo(
   return {
     title: seo?.title ?? fallbackTitle,
     description: seo?.description ?? fallbackDescription,
+    image: normalizeImage(seo?.image),
   }
 }
 
@@ -290,7 +373,9 @@ function normalizeBlocks(value: unknown): ContentBlock[] {
   }
 
   const blocks: ContentBlock[] = []
-  let pendingList: { style: 'bullet' | 'number'; items: string[] } | undefined
+  let pendingList:
+    | { style: 'bullet' | 'number'; items: Array<string | RichTextInline[]> }
+    | undefined
 
   const flushList = () => {
     if (pendingList) {
@@ -318,14 +403,13 @@ function normalizeBlocks(value: unknown): ContentBlock[] {
       continue
     }
 
-    if (block._type === 'imageWithAlt' && typeof block.url === 'string') {
+    const image = normalizeImage(block)
+
+    if (block._type === 'imageWithAlt' && image) {
       flushList()
       blocks.push({
         type: 'image',
-        url: block.url,
-        alt: typeof block.alt === 'string' ? block.alt : undefined,
-        caption: typeof block.caption === 'string' ? block.caption : undefined,
-        decorative: block.decorative === true,
+        ...image,
       })
       continue
     }
@@ -334,7 +418,8 @@ function normalizeBlocks(value: unknown): ContentBlock[] {
       continue
     }
 
-    const text = plainText(block.children)
+    const children = inlineChildren(block.children, block.markDefs)
+    const text = inlinePlainText(children)
 
     if (!text) {
       continue
@@ -348,7 +433,7 @@ function normalizeBlocks(value: unknown): ContentBlock[] {
         pendingList = { style, items: [] }
       }
 
-      pendingList.items.push(text)
+      pendingList.items.push(children.length > 0 ? children : text)
       continue
     }
 
@@ -359,16 +444,19 @@ function normalizeBlocks(value: unknown): ContentBlock[] {
         type: 'heading',
         level: block.style === 'h2' ? 2 : 3,
         text,
+        children,
       })
     } else if (block.style === 'blockquote') {
       blocks.push({
         type: 'quote',
         text,
+        children,
       })
     } else {
       blocks.push({
         type: 'paragraph',
         text,
+        children,
       })
     }
   }
@@ -378,15 +466,82 @@ function normalizeBlocks(value: unknown): ContentBlock[] {
   return blocks
 }
 
-function plainText(value: unknown) {
+function normalizeImages(value: unknown): ImageAttachment[] {
   if (!Array.isArray(value)) {
-    return ''
+    return []
   }
 
-  return value
-    .map((child) =>
-      isRecord(child) && typeof child.text === 'string' ? child.text : '',
+  return value.flatMap((item) => {
+    const image = normalizeImage(item)
+
+    return image ? [image] : []
+  })
+}
+
+function normalizeImage(value: unknown): ImageAttachment | undefined {
+  if (!isRecord(value) || typeof value.url !== 'string') {
+    return undefined
+  }
+
+  return {
+    key: typeof value._key === 'string' ? value._key : undefined,
+    url: value.url,
+    alt: typeof value.alt === 'string' ? value.alt : undefined,
+    caption: typeof value.caption === 'string' ? value.caption : undefined,
+    decorative: value.decorative === true,
+  }
+}
+
+function inlineChildren(
+  childrenValue: unknown,
+  markDefsValue: unknown,
+): RichTextInline[] {
+  if (!Array.isArray(childrenValue)) {
+    return []
+  }
+
+  const linksByKey = new Map<string, string>()
+
+  if (Array.isArray(markDefsValue)) {
+    for (const markDef of markDefsValue) {
+      if (
+        isRecord(markDef) &&
+        typeof markDef._key === 'string' &&
+        markDef._type === 'link' &&
+        typeof markDef.href === 'string'
+      ) {
+        linksByKey.set(markDef._key, markDef.href)
+      }
+    }
+  }
+
+  return childrenValue.flatMap((child) => {
+    if (!isRecord(child) || typeof child.text !== 'string') {
+      return []
+    }
+
+    const marks = Array.isArray(child.marks)
+      ? child.marks.filter((mark): mark is string => typeof mark === 'string')
+      : []
+    const decorators = marks.filter(
+      (mark): mark is 'strong' | 'em' => mark === 'strong' || mark === 'em',
     )
+    const href = marks.map((mark) => linksByKey.get(mark)).find(Boolean)
+
+    return [
+      {
+        key: typeof child._key === 'string' ? child._key : undefined,
+        text: child.text,
+        marks: decorators.length > 0 ? decorators : undefined,
+        href,
+      },
+    ]
+  })
+}
+
+function inlinePlainText(children: RichTextInline[]) {
+  return children
+    .map((child) => child.text)
     .join('')
     .trim()
 }

@@ -1,12 +1,14 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
+import { getSiteContent } from '../content/sanity'
 import { seoMeta } from '../content/seo'
 
 import appCss from '../styles.css?url'
 
 export const Route = createRootRoute({
-  head: () => ({
+  loader: () => getSiteContent(),
+  head: ({ loaderData }) => ({
     meta: [
       {
         charSet: 'utf8',
@@ -15,10 +17,12 @@ export const Route = createRootRoute({
         name: 'viewport',
         content: 'width=device-width, initial-scale=1',
       },
-      ...seoMeta({
-        title: 'Побратими разом',
-        description: 'Громадська організація ветеранів та волонтерів в Україні.',
-      }),
+      ...seoMeta(
+        loaderData?.settings.defaultSeo ?? {
+          title: 'Побратими разом',
+          description: 'Громадська організація ветеранів та волонтерів в Україні.',
+        },
+      ),
     ],
     links: [
       {
@@ -46,15 +50,17 @@ function NotFound() {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const content = Route.useLoaderData()
+
   return (
     <html lang="uk">
       <head>
         <HeadContent />
       </head>
       <body className="font-sans antialiased [overflow-wrap:anywhere]">
-        <Header />
+        <Header settings={content.settings} />
         {children}
-        <Footer />
+        <Footer settings={content.settings} />
         <Scripts />
       </body>
     </html>

@@ -316,6 +316,7 @@ export const seedContent: SiteContent = {
         'Єдиний напрям для збору, уточнення і передачі актуальних потреб військових та їхніх підрозділів.',
       status: 'active',
       href: '/proekty/verified-aid-requests/',
+      gallery: [],
       body: [
         {
           type: 'heading',
@@ -349,6 +350,7 @@ export const seedContent: SiteContent = {
         'Практична навігація для ветеранів, ветеранoк і родин: контакти, консультації, партнерські сервіси.',
       status: 'active',
       href: '/proekty/veteran-return-support/',
+      gallery: [],
       body: [
         {
           type: 'paragraph',
@@ -371,6 +373,7 @@ export const seedContent: SiteContent = {
         'Формат для бізнесів, громадських організацій і волонтерських груп, які хочуть допомагати регулярно.',
       status: 'planned',
       href: '/proekty/partner-network/',
+      gallery: [],
       body: [
         {
           type: 'paragraph',
@@ -396,6 +399,8 @@ export const seedContent: SiteContent = {
         'Фотоальбом для безпечних публічних кадрів з передач, зустрічей і роботи команди.',
       date: '2026-04-24',
       href: '/galereia/partner-deliveries/',
+      body: [],
+      photos: [],
     },
     {
       title: 'Зустрічі ветеранської спільноти',
@@ -404,6 +409,8 @@ export const seedContent: SiteContent = {
         'Добірка фото з подій, де можна показати людей, простір і атмосферу без чутливих деталей.',
       date: '2026-04-12',
       href: '/galereia/veteran-community-meetings/',
+      body: [],
+      photos: [],
     },
   ],
   videos: [
@@ -428,4 +435,5 @@ export const seedContent: SiteContent = {
       sourceUrl: 'https://www.youtube.com/watch?v=jx5z2yWmtII',
     },
   ],
+  people: [],
 }

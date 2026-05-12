@@ -1,4 +1,5 @@
 import type { NewsPost, Project } from '../content/types'
+import { AttachmentGrid, AttachmentImage } from './AttachmentImage'
 import { RichText } from './RichText'
 
 interface ArticlePageProps {
@@ -13,7 +14,17 @@ export function ArticlePage({ eyebrow, item }: ArticlePageProps) {
         <p className="eyebrow">{eyebrow}</p>
         <h1>{item.title}</h1>
         <p className="lede">{item.summary}</p>
+        {item.coverImage ? (
+          <AttachmentImage
+            image={item.coverImage}
+            className="cover-image"
+            loading="eager"
+          />
+        ) : null}
         <RichText blocks={item.body} />
+        {'gallery' in item ? (
+          <AttachmentGrid images={item.gallery} label="Фотоматеріали проєкту" />
+        ) : null}
       </article>
     </main>
   )

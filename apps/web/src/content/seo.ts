@@ -5,6 +5,22 @@ const siteUrl = import.meta.env.VITE_SITE_URL || 'https://pobratymy.com'
 
 export function seoMeta(seo: SeoFields) {
   const title = seo.title.includes(siteName) ? seo.title : `${seo.title} - ${siteName}`
+  const imageMeta = seo.image
+    ? [
+        {
+          property: 'og:image',
+          content: seo.image.url,
+        },
+        {
+          property: 'og:image:alt',
+          content: seo.image.decorative ? '' : (seo.image.alt ?? title),
+        },
+        {
+          name: 'twitter:image',
+          content: seo.image.url,
+        },
+      ]
+    : []
 
   return [
     {
@@ -38,6 +54,7 @@ export function seoMeta(seo: SeoFields) {
       name: 'twitter:card',
       content: 'summary_large_image',
     },
+    ...imageMeta,
   ]
 }
 

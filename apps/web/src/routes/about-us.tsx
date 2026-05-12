@@ -1,20 +1,21 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { ContentPage } from '../components/ContentPage'
-import { getPageContent } from '../content/sanity'
+import { getSiteContent } from '../content/sanity'
 import { fallbackSeo, seoMeta } from '../content/seo'
 
 export const Route = createFileRoute('/about-us')({
-  loader: () => getPageContent({ data: 'aboutUs' }),
+  loader: () => getSiteContent(),
   head: ({ loaderData }) => ({
     meta: seoMeta(
-      loaderData?.seo ?? fallbackSeo('Про організацію', 'Інформація про організацію.'),
+      loaderData?.pages.aboutUs.seo ??
+        fallbackSeo('Про організацію', 'Інформація про організацію.'),
     ),
   }),
   component: AboutUs,
 })
 
 function AboutUs() {
-  const page = Route.useLoaderData()
+  const content = Route.useLoaderData()
 
-  return <ContentPage page={page} />
+  return <ContentPage page={content.pages.aboutUs} people={content.people} />
 }

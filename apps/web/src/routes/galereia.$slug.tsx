@@ -1,5 +1,7 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
-import { MissingArticle, SimpleDetailPage } from '../components/ArticlePage'
+import { MissingArticle } from '../components/ArticlePage'
+import { AttachmentGrid, AttachmentImage } from '../components/AttachmentImage'
+import { RichText } from '../components/RichText'
 import { getGalleryAlbum } from '../content/sanity'
 import { fallbackSeo, seoMeta } from '../content/seo'
 
@@ -28,6 +30,21 @@ function GalleryDetail() {
   const album = Route.useLoaderData()
 
   return (
-    <SimpleDetailPage eyebrow="Галерея" title={album.title} summary={album.summary} />
+    <main className="page-wrap">
+      <article className="content-shell content-shell-wide">
+        <p className="eyebrow">Галерея</p>
+        <h1>{album.title}</h1>
+        <p className="lede">{album.summary}</p>
+        {album.coverImage ? (
+          <AttachmentImage
+            image={album.coverImage}
+            className="cover-image"
+            loading="eager"
+          />
+        ) : null}
+        <RichText blocks={album.body} />
+        <AttachmentGrid images={album.photos} label="Фотоальбом" />
+      </article>
+    </main>
   )
 }

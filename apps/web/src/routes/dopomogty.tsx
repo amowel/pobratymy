@@ -1,13 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { ContentPage } from '../components/ContentPage'
-import { getPageContent } from '../content/sanity'
+import { getSiteContent } from '../content/sanity'
 import { fallbackSeo, seoMeta } from '../content/seo'
 
 export const Route = createFileRoute('/dopomogty')({
-  loader: () => getPageContent({ data: 'help' }),
+  loader: () => getSiteContent(),
   head: ({ loaderData }) => ({
     meta: seoMeta(
-      loaderData?.seo ??
+      loaderData?.pages.help.seo ??
         fallbackSeo('Як допомогти', 'Способи підтримати ГО «Побратими разом».'),
     ),
   }),
@@ -15,7 +15,7 @@ export const Route = createFileRoute('/dopomogty')({
 })
 
 function Help() {
-  const page = Route.useLoaderData()
+  const content = Route.useLoaderData()
 
-  return <ContentPage page={page} />
+  return <ContentPage page={content.pages.help} settings={content.settings} />
 }
