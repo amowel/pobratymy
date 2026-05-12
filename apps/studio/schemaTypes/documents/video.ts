@@ -2,6 +2,10 @@ import { PlayIcon } from '@sanity/icons'
 import { defineField, defineType } from 'sanity'
 import { validateSlug } from '../lib/validation'
 
+const validationApiVersion = '2026-05-06'
+const maxUploadedVideoBytes = 25 * 1024 * 1024
+const maxUploadedVideoMegabytes = maxUploadedVideoBytes / 1024 / 1024
+
 export const video = defineType({
   name: 'video',
   title: 'Videos',
@@ -84,7 +88,37 @@ export const video = defineType({
       options: {
         accept: 'video/*',
       },
-      description: 'Use this only when the video is not hosted on YouTube or Vimeo.',
+      description:
+        'Prefer YouTube or Vimeo for public videos. Use Sanity uploads only for short clips under 25 MB to stay within the free plan.',
+      validation: (rule) =>
+        rule.custom(async (uploadedVideo, context) => {
+          const assetRef =
+            typeof uploadedVideo === 'object' &&
+            uploadedVideo !== null &&
+            'asset' in uploadedVideo &&
+            typeof uploadedVideo.asset === 'object' &&
+            uploadedVideo.asset !== null &&
+            '_ref' in uploadedVideo.asset &&
+            typeof uploadedVideo.asset._ref === 'string'
+              ? uploadedVideo.asset._ref
+              : undefined
+
+          if (!assetRef) {
+            return true
+          }
+
+          const client = context.getClient({ apiVersion: validationApiVersion })
+          const asset = await client.fetch<{ size?: number } | null>(
+            '*[_id == $assetRef][0]{size}',
+            { assetRef },
+          )
+
+          if (!asset?.size || asset.size <= maxUploadedVideoBytes) {
+            return true
+          }
+
+          return `Keep uploaded videos under ${maxUploadedVideoMegabytes} MB. Use YouTube or Vimeo for larger files.`
+        }),
     }),
     defineField({
       name: 'thumbnail',
