@@ -4,6 +4,7 @@ import type {
   ContentBlock,
   GalleryAlbum,
   ImageAttachment,
+  LinkItem,
   NewsPost,
   PageContent,
   Person,
@@ -12,6 +13,7 @@ import type {
   RouteId,
   SeoFields,
   SiteContent,
+  VideoAsset,
   VideoItem,
 } from './types'
 
@@ -63,8 +65,24 @@ const portableTextFields = `
 const siteContentQuery = defineQuery(`{
   "settings": *[_id == "siteSettings"][0]{
     title,
+    description,
     logo{
       ${imageWithAltFields}
+    },
+    favicon{
+      ${imageWithAltFields}
+    },
+    navigationLinks[]{
+      label,
+      href
+    },
+    supportCta{
+      label,
+      href
+    },
+    footerLinks[]{
+      label,
+      href
     },
     phone,
     email,
@@ -88,6 +106,20 @@ const siteContentQuery = defineQuery(`{
     coverImage{
       ${imageWithAltFields}
     },
+    primaryCta{
+      label,
+      href
+    },
+    secondaryCta{
+      label,
+      href
+    },
+    proofPoints[]{
+      label,
+      value
+    },
+    "featuredProjects": featuredProjects[]->slug.current,
+    "featuredNews": featuredNews[]->slug.current,
     body[]{
       ${portableTextFields}
     },
@@ -148,6 +180,11 @@ const siteContentQuery = defineQuery(`{
     "slug": slug.current,
     publishedAt,
     sourceUrl,
+    "uploadedVideo": uploadedVideo.asset->{
+      url,
+      mimeType,
+      originalFilename
+    },
     thumbnail{
       ${imageWithAltFields}
     },
@@ -229,6 +266,11 @@ function normalizeContent(result: SanityQueryResponse['result']): SiteContent {
       title: page.title,
       summary: page.summary,
       coverImage: normalizeImage(page.coverImage),
+      primaryCta: normalizeLink(page.primaryCta),
+      secondaryCta: normalizeLink(page.secondaryCta),
+      proofPoints: normalizeProofPoints(page.proofPoints),
+      featuredProjects: normalizeSlugList(page.featuredProjects),
+      featuredNews: normalizeSlugList(page.featuredNews),
       body: normalizeBlocks(page.body),
       seo: normalizeSeo(page.seo, page.title, page.summary),
     }
@@ -251,6 +293,16 @@ function normalizeSettings(settings: Partial<SiteContent['settings']> | undefine
     ...seedContent.settings,
     ...settings,
     logo: normalizeImage(settings?.logo),
+    favicon: normalizeImage(settings?.favicon),
+    navigationLinks: normalizeLinks(
+      settings?.navigationLinks,
+      seedContent.settings.navigationLinks,
+    ),
+    supportCta: normalizeLink(settings?.supportCta, seedContent.settings.supportCta),
+    footerLinks: normalizeLinks(
+      settings?.footerLinks,
+      seedContent.settings.footerLinks,
+    ),
     socialLinks: settings?.socialLinks ?? seedContent.settings.socialLinks,
     donationDetails: settings?.donationDetails ?? seedContent.settings.donationDetails,
     defaultSeo: normalizeSeo(
@@ -266,6 +318,14 @@ function normalizeHome(homePage: PageContent): SiteContent['home'] {
     ...seedContent.home,
     title: homePage.title || seedContent.home.title,
     summary: homePage.summary || seedContent.home.summary,
+    primaryCta: normalizeLink(homePage.primaryCta, seedContent.home.primaryCta),
+    secondaryCta: normalizeLink(homePage.secondaryCta, seedContent.home.secondaryCta),
+    proofPoints:
+      normalizeProofPoints(homePage.proofPoints) ?? seedContent.home.proofPoints,
+    featuredProjects:
+      normalizeSlugList(homePage.featuredProjects) ?? seedContent.home.featuredProjects,
+    featuredNews:
+      normalizeSlugList(homePage.featuredNews) ?? seedContent.home.featuredNews,
     seo: homePage.seo ?? seedContent.home.seo,
   }
 }
@@ -325,9 +385,13 @@ function normalizeAlbums(albums: Array<Partial<GalleryAlbum>> | undefined) {
 
 function normalizeVideos(videos: Array<Partial<VideoItem>> | undefined) {
   const normalized = (videos ?? [])
-    .filter((video) => video.title && video.sourceUrl)
+    .filter((video) => video.title && (video.sourceUrl || video.uploadedVideo?.url))
     .map<VideoItem>((video) => {
       const slug = video.slug ?? slugify(video.title!)
+      const sourceUrl =
+        typeof video.sourceUrl === 'string' && video.sourceUrl
+          ? video.sourceUrl
+          : undefined
 
       return {
         title: video.title!,
@@ -336,7 +400,8 @@ function normalizeVideos(videos: Array<Partial<VideoItem>> | undefined) {
         publishedAt: video.publishedAt ?? '',
         date: video.publishedAt?.slice(0, 10),
         href: `/video/#${slug}`,
-        sourceUrl: video.sourceUrl!,
+        sourceUrl,
+        uploadedVideo: normalizeVideoAsset(video.uploadedVideo),
         thumbnail: normalizeImage(video.thumbnail),
       }
     })
@@ -353,6 +418,82 @@ function normalizePeople(people: Array<Partial<Person>> | undefined) {
       photo: normalizeImage(person.photo),
       bio: normalizeBlocks(person.bio),
     }))
+}
+
+function normalizeLinks(value: unknown, fallback: LinkItem[]) {
+  if (!Array.isArray(value)) {
+    return fallback
+  }
+
+  const links = value.flatMap((item) => {
+    const link = normalizeLink(item)
+
+    return link ? [link] : []
+  })
+
+  return links.length > 0 ? links : fallback
+}
+
+function normalizeLink(value: unknown, fallback: LinkItem): LinkItem
+function normalizeLink(value: unknown, fallback?: LinkItem): LinkItem | undefined
+function normalizeLink(value: unknown, fallback?: LinkItem) {
+  if (
+    isRecord(value) &&
+    typeof value.label === 'string' &&
+    typeof value.href === 'string' &&
+    value.label &&
+    value.href
+  ) {
+    return {
+      label: value.label,
+      href: value.href,
+    }
+  }
+
+  return fallback
+}
+
+function normalizeProofPoints(value: unknown) {
+  if (!Array.isArray(value)) {
+    return
+  }
+
+  const points = value.flatMap((item) => {
+    if (
+      isRecord(item) &&
+      typeof item.label === 'string' &&
+      typeof item.value === 'string' &&
+      item.label &&
+      item.value
+    ) {
+      return [
+        {
+          label: item.label,
+          value: item.value,
+        },
+      ]
+    }
+
+    return []
+  })
+
+  if (points.length > 0) {
+    return points
+  }
+}
+
+function normalizeSlugList(value: unknown) {
+  if (!Array.isArray(value)) {
+    return
+  }
+
+  const slugs = value.filter(
+    (item): item is string => typeof item === 'string' && item.length > 0,
+  )
+
+  if (slugs.length > 0) {
+    return slugs
+  }
 }
 
 function normalizeSeo(
@@ -489,6 +630,19 @@ function normalizeImage(value: unknown): ImageAttachment | undefined {
     alt: typeof value.alt === 'string' ? value.alt : undefined,
     caption: typeof value.caption === 'string' ? value.caption : undefined,
     decorative: value.decorative === true,
+  }
+}
+
+function normalizeVideoAsset(value: unknown): VideoAsset | undefined {
+  if (!isRecord(value) || typeof value.url !== 'string') {
+    return undefined
+  }
+
+  return {
+    url: value.url,
+    mimeType: typeof value.mimeType === 'string' ? value.mimeType : undefined,
+    filename:
+      typeof value.originalFilename === 'string' ? value.originalFilename : undefined,
   }
 }
 

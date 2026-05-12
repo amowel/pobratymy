@@ -1,5 +1,5 @@
 import { DocumentIcon } from '@sanity/icons'
-import { defineField, defineType } from 'sanity'
+import { defineArrayMember, defineField, defineType } from 'sanity'
 
 const fixedRoutes = [
   { title: '/', value: 'home' },
@@ -80,6 +80,67 @@ export const page = defineType({
       title: 'Body',
       type: 'portableText',
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'primaryCta',
+      title: 'Homepage primary CTA',
+      type: 'navLink',
+      hidden: ({ document }) => document?.routeId !== 'home',
+    }),
+    defineField({
+      name: 'secondaryCta',
+      title: 'Homepage secondary CTA',
+      type: 'navLink',
+      hidden: ({ document }) => document?.routeId !== 'home',
+    }),
+    defineField({
+      name: 'proofPoints',
+      title: 'Homepage proof points',
+      type: 'array',
+      hidden: ({ document }) => document?.routeId !== 'home',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'label',
+              title: 'Label',
+              type: 'string',
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: 'value',
+              title: 'Value',
+              type: 'string',
+              validation: (rule) => rule.required(),
+            }),
+          ],
+          preview: {
+            select: {
+              title: 'label',
+              subtitle: 'value',
+            },
+          },
+        }),
+      ],
+      validation: (rule) =>
+        rule
+          .max(3)
+          .warning('The homepage layout is designed for up to 3 proof points.'),
+    }),
+    defineField({
+      name: 'featuredProjects',
+      title: 'Homepage featured projects',
+      type: 'array',
+      hidden: ({ document }) => document?.routeId !== 'home',
+      of: [defineArrayMember({ type: 'reference', to: [{ type: 'project' }] })],
+    }),
+    defineField({
+      name: 'featuredNews',
+      title: 'Homepage featured news',
+      type: 'array',
+      hidden: ({ document }) => document?.routeId !== 'home',
+      of: [defineArrayMember({ type: 'reference', to: [{ type: 'newsPost' }] })],
     }),
     defineField({
       name: 'seo',

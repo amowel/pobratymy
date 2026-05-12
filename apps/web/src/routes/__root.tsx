@@ -29,6 +29,14 @@ export const Route = createRootRoute({
         rel: 'stylesheet',
         href: appCss,
       },
+      ...(loaderData?.settings.favicon
+        ? [
+            {
+              rel: 'icon',
+              href: loaderData.settings.favicon.url,
+            },
+          ]
+        : []),
     ],
   }),
   notFoundComponent: NotFound,

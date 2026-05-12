@@ -1,19 +1,12 @@
 import { Link } from '@tanstack/react-router'
-import type { SiteSettings } from '../content/types'
-
-const links = [
-  { label: 'Про нас', to: '/pro-nas/' },
-  { label: 'Проєкти', to: '/proekty/' },
-  { label: 'Новини', to: '/novyny/' },
-  { label: 'Галерея', to: '/galereia/' },
-  { label: 'Відео', to: '/video/' },
-  { label: 'Контакти', to: '/contacts/' },
-] as const
+import type { LinkItem, SiteSettings } from '../content/types'
 
 const activeNavProps = { className: 'nav-link nav-link-active' } as const
 
 export default function Header({ settings }: { settings?: SiteSettings }) {
   const title = settings?.title || 'Побратими разом'
+  const navigationLinks = settings?.navigationLinks ?? []
+  const supportCta = settings?.supportCta
 
   return (
     <header className="site-header">
@@ -34,21 +27,38 @@ export default function Header({ settings }: { settings?: SiteSettings }) {
         </p>
 
         <div className="nav-links">
-          {links.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
+          {navigationLinks.map((link) => (
+            <HeaderLink
+              key={`${link.label}:${link.href}`}
+              link={link}
               className="nav-link"
-              activeProps={activeNavProps}
-            >
-              {link.label}
-            </Link>
+            />
           ))}
-          <Link to="/dopomogty/" className="support-link">
-            Підтримати
-          </Link>
+          {supportCta ? (
+            <HeaderLink link={supportCta} className="support-link" />
+          ) : null}
         </div>
       </nav>
     </header>
   )
+}
+
+function HeaderLink({ link, className }: { link: LinkItem; className: string }) {
+  if (isInternalPath(link.href)) {
+    return (
+      <Link to={link.href} className={className} activeProps={activeNavProps}>
+        {link.label}
+      </Link>
+    )
+  }
+
+  return (
+    <a href={link.href} className={className}>
+      {link.label}
+    </a>
+  )
+}
+
+function isInternalPath(href: string) {
+  return href.startsWith('/')
 }

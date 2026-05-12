@@ -8,6 +8,23 @@ export const seedContent: SiteContent = {
     title: 'Побратими разом',
     description:
       'Громадська організація, що координує практичну підтримку військових, ветеранів і їхніх родин.',
+    navigationLinks: [
+      { label: 'Про нас', href: '/pro-nas/' },
+      { label: 'Проєкти', href: '/proekty/' },
+      { label: 'Новини', href: '/novyny/' },
+      { label: 'Галерея', href: '/galereia/' },
+      { label: 'Відео', href: '/video/' },
+      { label: 'Контакти', href: '/contacts/' },
+    ],
+    supportCta: {
+      label: 'Підтримати',
+      href: '/dopomogty/',
+    },
+    footerLinks: [
+      { label: 'Проєкти', href: '/proekty/' },
+      { label: 'Новини', href: '/novyny/' },
+      { label: 'Контакти', href: '/contacts/' },
+    ],
     phone: '',
     email: 'info@pobratymy.com',
     address: 'Україна',

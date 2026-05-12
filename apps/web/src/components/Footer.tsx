@@ -3,6 +3,7 @@ import type { SiteSettings } from '../content/types'
 export default function Footer({ settings }: { settings?: SiteSettings }) {
   const year = new Date().getFullYear()
   const title = settings?.title || 'Побратими разом'
+  const footerLinks = settings?.footerLinks ?? []
   const visibleSocialLinks = settings?.socialLinks.filter((link) => link.url) ?? []
 
   return (
@@ -21,9 +22,11 @@ export default function Footer({ settings }: { settings?: SiteSettings }) {
         </div>
         <div className="footer-nav">
           <div className="footer-links">
-            <a href="/proekty/">Проєкти</a>
-            <a href="/novyny/">Новини</a>
-            <a href="/contacts/">Контакти</a>
+            {footerLinks.map((link) => (
+              <a key={`${link.label}:${link.href}`} href={link.href}>
+                {link.label}
+              </a>
+            ))}
           </div>
           {visibleSocialLinks.length > 0 ? (
             <div className="footer-links footer-socials">

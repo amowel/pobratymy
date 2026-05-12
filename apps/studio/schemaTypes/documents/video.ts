@@ -7,6 +7,18 @@ export const video = defineType({
   title: 'Videos',
   type: 'document',
   icon: PlayIcon,
+  validation: (rule) =>
+    rule.custom((document) => {
+      const sourceUrl =
+        typeof document?.sourceUrl === 'string' ? document.sourceUrl.trim() : ''
+      const uploadedVideo = document?.uploadedVideo as { asset?: unknown } | undefined
+
+      if (sourceUrl || uploadedVideo?.asset) {
+        return true
+      }
+
+      return 'Add a YouTube/Vimeo source URL or upload a video file.'
+    }),
   fields: [
     defineField({
       name: 'title',
@@ -37,7 +49,6 @@ export const video = defineType({
       type: 'url',
       validation: (rule) =>
         rule
-          .required()
           .uri({
             scheme: ['http', 'https'],
           })
@@ -65,6 +76,15 @@ export const video = defineType({
               return 'Enter a valid video URL.'
             }
           }),
+    }),
+    defineField({
+      name: 'uploadedVideo',
+      title: 'Uploaded video',
+      type: 'file',
+      options: {
+        accept: 'video/*',
+      },
+      description: 'Use this only when the video is not hosted on YouTube or Vimeo.',
     }),
     defineField({
       name: 'thumbnail',

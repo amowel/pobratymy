@@ -33,6 +33,11 @@ export interface DonationDetail {
   value: string
 }
 
+export interface LinkItem {
+  label: string
+  href: string
+}
+
 export interface RichTextInline {
   key?: string
   text: string
@@ -44,6 +49,10 @@ export interface SiteSettings {
   title: string
   description: string
   logo?: ImageAttachment
+  favicon?: ImageAttachment
+  navigationLinks: LinkItem[]
+  supportCta: LinkItem
+  footerLinks: LinkItem[]
   phone?: string
   email?: string
   address?: string
@@ -94,6 +103,14 @@ export interface PageContent {
   title: string
   summary: string
   coverImage?: ImageAttachment
+  primaryCta?: LinkItem
+  secondaryCta?: LinkItem
+  proofPoints?: Array<{
+    label: string
+    value: string
+  }>
+  featuredProjects?: string[]
+  featuredNews?: string[]
   body: ContentBlock[]
   seo: SeoFields
 }
@@ -102,14 +119,8 @@ export interface HomeContent {
   eyebrow: string
   title: string
   summary: string
-  primaryCta: {
-    label: string
-    href: string
-  }
-  secondaryCta: {
-    label: string
-    href: string
-  }
+  primaryCta: LinkItem
+  secondaryCta: LinkItem
   proofPoints: Array<{
     label: string
     value: string
@@ -149,8 +160,15 @@ export interface GalleryAlbum extends CollectionItem {
 
 export interface VideoItem extends CollectionItem {
   publishedAt: string
-  sourceUrl: string
+  sourceUrl?: string
+  uploadedVideo?: VideoAsset
   thumbnail?: ImageAttachment
+}
+
+export interface VideoAsset {
+  url: string
+  mimeType?: string
+  filename?: string
 }
 
 export interface Person {

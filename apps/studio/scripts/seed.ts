@@ -4,6 +4,7 @@ import type {
   ContentBlock,
   GalleryAlbum,
   NewsPost,
+  PageContent,
   Project,
   RichTextInline,
 } from '../../web/src/content/types'
@@ -34,15 +35,7 @@ const legacySeedIds = [
 
 const documents: SeedDocument[] = [
   siteSettingsDocument(),
-  ...Object.values(seedContent.pages).map((page) => ({
-    _id: `page-${page.routeId}`,
-    _type: 'page',
-    routeId: page.routeId,
-    title: page.title,
-    summary: page.summary,
-    body: toPortableText(page.body),
-    seo: page.seo,
-  })),
+  ...Object.values(seedContent.pages).map((page) => pageDocument(page)),
   ...seedContent.newsPosts.map(newsPostDocument),
   ...seedContent.projects.map(projectDocument),
   ...seedContent.galleryAlbums.map(galleryAlbumDocument),
@@ -76,7 +69,11 @@ function siteSettingsDocument(): SeedDocument {
     _id: 'siteSettings',
     _type: 'siteSettings',
     title: seedContent.settings.title,
+    description: seedContent.settings.description,
     defaultSeo: seedContent.settings.defaultSeo,
+    navigationLinks: seedContent.settings.navigationLinks.map(linkObject),
+    supportCta: linkObject(seedContent.settings.supportCta),
+    footerLinks: seedContent.settings.footerLinks.map(linkObject),
     phone: seedContent.settings.phone,
     email: seedContent.settings.email,
     address: seedContent.settings.address,
@@ -90,6 +87,54 @@ function siteSettingsDocument(): SeedDocument {
       label: detail.label,
       value: detail.value,
     })),
+  }
+}
+
+function pageDocument(page: PageContent): SeedDocument {
+  const document: SeedDocument = {
+    _id: `page-${page.routeId}`,
+    _type: 'page',
+    routeId: page.routeId,
+    title: page.title,
+    summary: page.summary,
+    body: toPortableText(page.body),
+    seo: page.seo,
+  }
+
+  if (page.routeId === 'home') {
+    Object.assign(document, homePageFields())
+  }
+
+  return document
+}
+
+function homePageFields() {
+  return {
+    primaryCta: linkObject(seedContent.home.primaryCta),
+    secondaryCta: linkObject(seedContent.home.secondaryCta),
+    proofPoints: seedContent.home.proofPoints.map((point) => ({
+      _key: key(`proof-${point.label}`),
+      label: point.label,
+      value: point.value,
+    })),
+    featuredProjects: seedContent.home.featuredProjects.map((slug) => ({
+      _type: 'reference',
+      _key: key(`featured-project-${slug}`),
+      _ref: `project-${slug}`,
+    })),
+    featuredNews: seedContent.home.featuredNews.map((slug) => ({
+      _type: 'reference',
+      _key: key(`featured-news-${slug}`),
+      _ref: `newsPost-${slug}`,
+    })),
+  }
+}
+
+function linkObject(link: { label: string; href: string }) {
+  return {
+    _key: key(`link-${link.label}-${link.href}`),
+    label: link.label,
+    href: link.href,
   }
 }
 

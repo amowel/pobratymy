@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { useMemo } from 'react'
-import type { HomeContent, NewsPost, Project } from '../content/types'
+import type { HomeContent, LinkItem, NewsPost, Project } from '../content/types'
 import { ArrowUpRightIcon } from './ArrowUpRightIcon'
 
 interface HomePageProps {
@@ -23,12 +23,8 @@ export function HomePage({ home, projects, newsPosts }: HomePageProps) {
           <h1>{home.title}</h1>
           <p className="lede">{home.summary}</p>
           <div className="action-row">
-            <Link to="/dopomogty/" className="button-primary">
-              {home.primaryCta.label}
-            </Link>
-            <Link to="/proekty/" className="button-secondary">
-              {home.secondaryCta.label}
-            </Link>
+            <ActionLink link={home.primaryCta} className="button-primary" />
+            <ActionLink link={home.secondaryCta} className="button-secondary" />
           </div>
         </div>
 
@@ -96,6 +92,22 @@ export function HomePage({ home, projects, newsPosts }: HomePageProps) {
         </div>
       </section>
     </main>
+  )
+}
+
+function ActionLink({ link, className }: { link: LinkItem; className: string }) {
+  if (link.href.startsWith('/')) {
+    return (
+      <Link to={link.href} className={className}>
+        {link.label}
+      </Link>
+    )
+  }
+
+  return (
+    <a href={link.href} className={className}>
+      {link.label}
+    </a>
   )
 }
 
